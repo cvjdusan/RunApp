@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/workout_menu_item_sort"
+        android:icon="@drawable/baseline_sort_24"
+        android:title="@string/workout_list_options_menu_title_sort"
+        app:showAsAction="always" />
+
+</menu>

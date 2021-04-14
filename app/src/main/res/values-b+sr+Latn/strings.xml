@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Aplikacija za trčanje</string>
+
+    <!-- Main -->
+    <string name="main_button_text_calories">Izračunaj kalorije</string>
+    <string name="main_button_text_browse">Pretraži rute</string>
+    <string name="main_navigation_item_title_routes">Rute</string>
+    <string name="main_navigation_item_title_workouts">Treninzi</string>
+    <string name="main_navigation_item_title_calories">Kalorije</string>
+
+    <!-- Routes -->
+    <string name="route_browse_toolbar_title">Rute za šetanje</string>
+    <string name="route_view_holder_button_text_description">Opis</string>
+    <string name="route_view_holder_button_text_location">Lokacija</string>
+
+    <!-- Workouts -->
+    <string name="workout_list_toolbar_title">Treninzi</string>
+    <string name="workout_list_options_menu_title_sort">Sortiraj</string>
+    <string name="workout_list_fab_text_start">Započni</string>
+    <string name="workout_list_fab_text_create">Napravi</string>
+    <string name="workout_create_toolbar_title">Novi trening</string>
+    <string name="workout_create_edit_text_hint_date">Datum</string>
+    <string name="workout_create_edit_text_hint_label">Naziv</string>
+    <string name="workout_create_edit_text_hint_distance">Distanca</string>
+    <string name="workout_create_edit_text_hint_duration">Trajanje</string>
+    <string name="workout_create_edit_text_suffix_distance">km</string>
+    <string name="workout_create_edit_text_suffix_duration">min</string>
+    <string name="workout_create_button_text_create">Napravi</string>
+    <string name="workout_create_edit_text_error_empty">Obavezno polje</string>
+    <string name="workout_create_edit_text_error_format">Pogrešan format</string>
+    <string name="workout_start_button_text_start">Započni</string>
+    <string name="workout_start_button_text_finish">Završi</string>
+    <string name="workout_start_button_text_cancel">Odustani</string>
+    <string name="workout_start_button_text_power">Power</string>
+    <string-array name="workout_toast_motivation">
+        <item>Trči više! :)</item>
+        <item>Trči brže! :)</item>
+    </string-array>
+    <string name="workout_notification_channel_name">Pratilac treninga</string>
+    <string name="workout_notification_content_title">Workout</string>
+    <string name="workout_notification_content_text">
+        Aplikacija za trčanje prati vaš trening.
+    </string>
+    <string name="workout_label">Trening</string>
+
+    <!-- Calories -->
+    <string name="calories_toolbar_title">Kalkulator kalorija</string>
+    <string name="calories_edit_text_hint_weight">Težina</string>
+    <string name="calories_edit_text_hint_height">Visina</string>
+    <string name="calories_edit_text_hint_age">Starost</string>
+    <string name="calories_radio_button_text_male">Muško</string>
+    <string name="calories_radio_button_text_female">Žensko</string>
+    <string name="calories_edit_text_hint_duration">Trajanje</string>
+    <string name="calories_button_text_calculate">Izračunaj</string>
+    <string name="calories_edit_text_suffix_weight">kg</string>
+    <string name="calories_edit_text_suffix_height">cm</string>
+    <string name="calories_edit_text_suffix_age">god</string>
+    <string name="calories_edit_text_suffix_duration">min</string>
+    <string name="calories_burned">Potrošeno</string>
+    <string name="calories_needed">Potrebno</string>
+    <string name="calories_toast_text_error">Pogrešne vrednosti!</string>
+
+</resources>

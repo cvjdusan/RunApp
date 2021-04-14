@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph_workouts"
+    app:startDestination="@id/workout_list">
+
+    <fragment
+        android:id="@+id/workout_list"
+        android:name="rs.ac.bg.etf.running.workouts.WorkoutListFragment"
+        android:label="fragment_workout_list"
+        tools:layout="@layout/fragment_workout_list">
+        <action
+            android:id="@+id/create_workout"
+            app:destination="@id/workout_create" />
+        <action
+            android:id="@+id/start_workout"
+            app:destination="@id/workout_start" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/workout_create"
+        android:name="rs.ac.bg.etf.running.workouts.WorkoutCreateFragment"
+        android:label="fragment_workout_create"
+        tools:layout="@layout/fragment_workout_create" />
+
+    <fragment
+        android:id="@+id/workout_start"
+        android:name="rs.ac.bg.etf.running.workouts.WorkoutStartFragment"
+        android:label="fragment_workout_start"
+        tools:layout="@layout/fragment_workout_start" />
+</navigation>

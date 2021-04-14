@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">RunApp</string>
+
+    <!-- Main -->
+    <string name="main_button_text_calories">Calculate calories</string>
+    <string name="main_button_text_browse">Browse routes</string>
+    <string name="main_navigation_item_title_routes">Routes</string>
+    <string name="main_navigation_item_title_workouts">Workouts</string>
+    <string name="main_navigation_item_title_calories">Calories</string>
+
+    <!-- Routes -->
+    <string name="route_browse_toolbar_title">Walking Routes</string>
+    <string name="route_view_holder_button_text_description">Description</string>
+    <string name="route_view_holder_button_text_location">Location</string>
+
+    <!-- Workouts -->
+    <string name="workout_list_toolbar_title">Workouts</string>
+    <string name="workout_list_options_menu_title_sort">Sort</string>
+    <string name="workout_list_fab_text_start">Start</string>
+    <string name="workout_list_fab_text_create">Create</string>
+    <string name="workout_create_toolbar_title">New Workout</string>
+    <string name="workout_create_edit_text_hint_date">Date</string>
+    <string name="workout_create_edit_text_hint_label">Label</string>
+    <string name="workout_create_edit_text_hint_distance">Distance</string>
+    <string name="workout_create_edit_text_hint_duration">Duration</string>
+    <string name="workout_create_edit_text_suffix_distance">km</string>
+    <string name="workout_create_edit_text_suffix_duration">min</string>
+    <string name="workout_create_button_text_create">Create</string>
+    <string name="workout_create_edit_text_error_empty">Field is required</string>
+    <string name="workout_create_edit_text_error_format">Wrong format</string>
+    <string name="workout_start_button_text_start">Start</string>
+    <string name="workout_start_button_text_finish">Finish</string>
+    <string name="workout_start_button_text_cancel">Cancel</string>
+    <string name="workout_start_button_text_power">Power</string>
+    <string-array name="workout_toast_motivation">
+        <item>Run longer! :)</item>
+        <item>Run faster! :)</item>
+    </string-array>
+    <string name="workout_notification_channel_name">Workout tracker</string>
+    <string name="workout_notification_content_title">Workout</string>
+    <string name="workout_notification_content_text">
+        Running application is tracking your workout.
+    </string>
+    <string name="workout_label">Workout</string>
+
+    <!-- Calories -->
+    <string name="calories_toolbar_title">Calories Calculator</string>
+    <string name="calories_edit_text_hint_weight">Weight</string>
+    <string name="calories_edit_text_hint_height">Height</string>
+    <string name="calories_edit_text_hint_age">Age</string>
+    <string name="calories_radio_button_text_male">Male</string>
+    <string name="calories_radio_button_text_female">Female</string>
+    <string name="calories_edit_text_hint_duration">Duration</string>
+    <string name="calories_button_text_calculate">Calculate</string>
+    <string name="calories_edit_text_suffix_weight">kg</string>
+    <string name="calories_edit_text_suffix_height">cm</string>
+    <string name="calories_edit_text_suffix_age">year</string>
+    <string name="calories_edit_text_suffix_duration">min</string>
+    <string name="calories_burned">Burned</string>
+    <string name="calories_needed">Needed</string>
+    <string name="calories_toast_text_error">Wrong values!</string>
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="welcome">"Welcome!"</string>
+    <string name="invalid_username">Not a valid username</string>
+    <string name="invalid_password">Password must be >5 characters</string>
+    <string name="login_failed">"Login failed"</string>
+
+</resources>
