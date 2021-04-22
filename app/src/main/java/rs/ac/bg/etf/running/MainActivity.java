@@ -30,14 +30,14 @@ public class MainActivity extends AppCompatActivity {
         if (savedInstanceState == null) {
             setupNavigation();
         }
-
-        if (getIntent().getAction().equals(INTENT_ACTION_WORKOUT)) {
-            NavController navController = BottomNavigationUtil
-                    .changeNavHostFragment(R.id.nav_graph_workouts);
-            if (navController != null) {
-                navController.navigate(WorkoutListFragmentDirections.startWorkout());
-            }
-        }
+//
+//        if (getIntent().getAction().equals(INTENT_ACTION_WORKOUT)) {
+//            NavController navController = BottomNavigationUtil
+//                    .changeNavHostFragment(R.id.nav_graph_workouts);
+//            if (navController != null) {
+//                navController.navigate(WorkoutListFragmentDirections.startWorkout());
+//            }
+//        }
     }
 
     @Override

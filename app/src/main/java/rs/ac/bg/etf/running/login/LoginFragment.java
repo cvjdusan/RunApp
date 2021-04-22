@@ -1,5 +1,6 @@
 package rs.ac.bg.etf.running.login;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,24 +14,37 @@ import androidx.viewpager.widget.ViewPager;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 
+import dagger.hilt.android.AndroidEntryPoint;
+import rs.ac.bg.etf.running.MainActivity;
 import rs.ac.bg.etf.running.R;
+import rs.ac.bg.etf.running.databinding.ActivityLoginBinding;
+import rs.ac.bg.etf.running.databinding.FragmentLoginBinding;
+import rs.ac.bg.etf.running.databinding.FragmentRouteBrowseBinding;
 
+@AndroidEntryPoint
 public class LoginFragment extends Fragment {
 
+    private FragmentLoginBinding binding;
 
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        ViewGroup root = (ViewGroup) inflater.inflate(R.layout.fragment_login, container, false);
+        binding = FragmentLoginBinding.inflate(inflater, container, false);
 
-        return root;
+        binding.loginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), MainActivity.class);
+                startActivity(intent);}
+        });
+
+        return binding.getRoot();
     }
 
 }

@@ -61,5 +61,12 @@
     <string name="calories_burned">Potrošeno</string>
     <string name="calories_needed">Potrebno</string>
     <string name="calories_toast_text_error">Pogrešne vrednosti!</string>
+    <string name="username">Kor. ime</string>
+    <string name="password">Šifra</string>
+    <string name="login">Login</string>
+    <string name="remember_me">Zapamti me</string>
+    <string name="email">Email</string>
+    <string name="confirm_password">Ponoviti šifru</string>
+    <string name="register">Registruj se</string>
 
 </resources>

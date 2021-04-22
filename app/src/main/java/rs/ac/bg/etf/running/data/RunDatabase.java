@@ -8,9 +8,10 @@ import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
 
 @TypeConverters(value = {DateConverter.class})
-@Database(entities = {Workout.class}, version = 1, exportSchema = false)
+@Database(entities = {Workout.class, User.class}, version = 1, exportSchema = false)
 public abstract class RunDatabase extends RoomDatabase {
     public abstract WorkoutDao workoutDao();
+    public abstract UserDao userDao();
 
     private static final String DATABASE_NAME = "run-app.db";
     private static RunDatabase instance = null;

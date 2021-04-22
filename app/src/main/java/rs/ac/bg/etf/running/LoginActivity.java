@@ -1,25 +1,29 @@
 package rs.ac.bg.etf.running;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.viewpager.widget.ViewPager;
+import androidx.viewpager2.widget.ViewPager2;
 
 import android.os.Bundle;
 
 import com.google.android.material.tabs.TabLayout;
 
 import dagger.hilt.android.AndroidEntryPoint;
+import rs.ac.bg.etf.running.databinding.ActivityLoginBinding;
+import rs.ac.bg.etf.running.databinding.ActivityMainBinding;
 import rs.ac.bg.etf.running.login.LoginAdapter;
 
 @AndroidEntryPoint
 public class LoginActivity extends AppCompatActivity {
 
     private TabLayout tabLayout;
-    private ViewPager viewPager;
+    private ViewPager2 viewPager;
+    private ActivityLoginBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        binding = ActivityLoginBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         tabLayout = findViewById(R.id.tab_layout);
         viewPager = findViewById(R.id.view_pager);
@@ -28,13 +32,16 @@ public class LoginActivity extends AppCompatActivity {
         tabLayout.addTab(tabLayout.newTab().setText("Register"));
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
-
-
-        final LoginAdapter adapter = new LoginAdapter(getSupportFragmentManager(), this, tabLayout.getTabCount());
+        final LoginAdapter adapter = new LoginAdapter(getSupportFragmentManager(), getLifecycle());
 
         viewPager.setAdapter(adapter);
 
-        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+        viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                tabLayout.selectTab(tabLayout.getTabAt(position));
+            }
+        });
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -52,5 +59,6 @@ public class LoginActivity extends AppCompatActivity {
 
             }
         });
+
     }
 }
