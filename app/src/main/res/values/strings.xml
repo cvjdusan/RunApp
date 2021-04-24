@@ -69,5 +69,12 @@
     <string name="email">Email</string>
     <string name="confirm_password">Confirm password</string>
     <string name="register">Register</string>
-
+    <string name="empty_values">Empty values not allowed.</string>
+    <string name="user_created">Registration is successful.</string>
+    <string name="mail_exists">There is already user with the same email.</string>
+    <string name="mail_not_valid">Email is not in valid format.</string>
+    <string name="username_exists">Username is not available.</string>
+    <string name="password_short">Length of password must be greater than 4.</string>
+    <string name="password_dont_match">Passwords do not match.</string>
+    <string name="user_doesnt_exist">Username/password is wrong.</string>
 </resources>

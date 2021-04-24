@@ -18,7 +18,7 @@ public class UserViewModel extends ViewModel {
     private final UserRepository userRepository;
     private final SavedStateHandle savedStateHandle;
 
-    private static final String SORTED_KEY = "sorted-key";
+    private static final String SORTED_KEY = "sorted-key-2";
     private boolean sorted = false;
 
     private final LiveData<List<User>> users;
@@ -46,7 +46,11 @@ public class UserViewModel extends ViewModel {
         userRepository.insert(user);
     }
 
-    public LiveData<List<User>> getWorkoutList() {
+    public LiveData<User> findUserByEmail(String email) {return userRepository.findUserByEmail(email); }
+
+    public LiveData<User> findUserByUsername(String username) {return userRepository.findUserByUsername(username); }
+
+    public LiveData<List<User>> getUsersList() {
         return users;
     }
 }

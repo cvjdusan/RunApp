@@ -32,5 +32,8 @@ public class UserRepository {
     public LiveData<List<User>> getAllLiveData() {
         return userDao.getAllLiveData();
     }
-    
+
+    public LiveData<User> findUserByEmail(String email) {return userDao.findUserByEmail(email); }
+
+    public LiveData<User> findUserByUsername(String username) {return userDao.findUserByUsername(username); }
 }

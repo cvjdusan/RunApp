@@ -68,5 +68,13 @@
     <string name="email">Email</string>
     <string name="confirm_password">Ponoviti šifru</string>
     <string name="register">Registruj se</string>
+    <string name="empty_values">Neka polja nisu uneta.</string>
+    <string name="password_short">Dužina lozinke mora biti veća od 4 karaktera.</string>
+    <string name="password_dont_match">Šifre se ne poklapaju.</string>
+    <string name="user_doesnt_exist">Korisnik sa zadatim vrednostima ne postoji.</string>
+    <string name="user_created">Uspešna registracija.</string>
+    <string name="mail_exists">Email već postoji.</string>
+    <string name="username_exists">Username već postoji.</string>
+    <string name="mail_not_valid">Email nije u dobrom formatu.</string>
 
 </resources>
