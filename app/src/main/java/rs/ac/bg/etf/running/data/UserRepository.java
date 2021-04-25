@@ -1,6 +1,7 @@
 package rs.ac.bg.etf.running.data;
 
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Transformations;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -33,7 +34,11 @@ public class UserRepository {
         return userDao.getAllLiveData();
     }
 
-    public LiveData<User> findUserByEmail(String email) {return userDao.findUserByEmail(email); }
+    public User findUserByEmail(String email) {
+        return userDao.findUserByEmail(email);
+    }
 
-    public LiveData<User> findUserByUsername(String username) {return userDao.findUserByUsername(username); }
+    public User findUserByUsername(String username) {
+        return userDao.findUserByUsername(username);
+    }
 }

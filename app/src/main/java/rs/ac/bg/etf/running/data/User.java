@@ -1,18 +1,25 @@
 package rs.ac.bg.etf.running.data;
 
+import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
 import java.util.Date;
 
-@Entity
+@Entity(indices = {@Index(value = {"email", "username"},
+        unique = true)})
 public class User {
 
     @PrimaryKey(autoGenerate = true)
     private long id;
 
+    @ColumnInfo(name = "email")
     private String email;
+
+    @ColumnInfo(name = "username")
     private String username;
+
     private String password;
 
     public User(long id, String email, String username, String password) {

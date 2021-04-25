@@ -1,6 +1,8 @@
 package rs.ac.bg.etf.running.login;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,13 +11,21 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicReference;
 
 import dagger.hilt.android.AndroidEntryPoint;
 import rs.ac.bg.etf.running.R;
+import rs.ac.bg.etf.running.data.RunDatabase;
 import rs.ac.bg.etf.running.data.User;
+import rs.ac.bg.etf.running.data.UserDao;
 import rs.ac.bg.etf.running.databinding.FragmentRegisterBinding;
 import rs.ac.bg.etf.running.users.UserViewModel;
 
@@ -28,7 +38,7 @@ public class RegisterFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        userViewModel = new ViewModelProvider(getActivity()).get(UserViewModel.class);
+        userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
     }
 
     @Nullable
@@ -41,14 +51,21 @@ public class RegisterFragment extends Fragment {
             String username = binding.username.getEditableText().toString();
             String password = binding.password.getEditableText().toString();
             String confirmPassword = binding.confirmPassword.getEditableText().toString();
-            if(checkErrors(email, username, password, confirmPassword) == false) {
-                userViewModel.insertUser(new User(
-                                        0,
-                                        email,
-                                        username,
-                                        password
-                                ));
-                Toast.makeText(getContext(), R.string.user_created, Toast.LENGTH_SHORT).show();
+            try {
+                if(checkErrors(email, username, password, confirmPassword) == false) {
+                    if (checkEmail(email) != null) {
+                        Toast.makeText(getContext(), R.string.mail_exists, Toast.LENGTH_SHORT).show();
+                    } else if (checkUsername(username) != null) {
+                        Toast.makeText(getContext(), R.string.username_exists, Toast.LENGTH_SHORT).show();
+                    } else {
+                        userViewModel.insertUser(new User(0, email, username, password));
+                        Toast.makeText(getContext(), R.string.user_created, Toast.LENGTH_SHORT).show();
+                    }
+                }
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         });
 
@@ -59,7 +76,7 @@ public class RegisterFragment extends Fragment {
         return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 
-    private boolean checkErrors(String email, String username, String password,
+    private Boolean checkErrors(String email, String username, String password,
     String confirmPassword){
 
 
@@ -77,27 +94,34 @@ public class RegisterFragment extends Fragment {
         } else if(!isEmailValid(email)){
             Toast.makeText(getContext(), R.string.mail_not_valid, Toast.LENGTH_SHORT).show();
             return true;
-        } else {
+    }
 
-            AtomicBoolean err = new AtomicBoolean(false);
+        return false;
+    }
 
-            userViewModel.getUsersList().observe(getActivity(), users -> {
-                for(int i = 0; i < users.size(); i++){
-                    if(users.get(i).getUsername().equals(username)){
-                        Toast.makeText(getContext(), R.string.username_exists, Toast.LENGTH_SHORT).show();
-                        err.set(true);
-                    } else if(users.get(i).getEmail().equals(email)) {
-                        Toast.makeText(getContext(), R.string.mail_exists, Toast.LENGTH_SHORT).show();
-                        err.set(true);
-                    }
-                }
-            });
+    private User checkEmail(String email) throws ExecutionException, InterruptedException {
+        Callable<User> callable = new Callable<User>() {
+            @Override
+            public User call() throws Exception {
+                return userViewModel.findUserByEmail(email);
+            }
+        };
 
-            return err.get();
-        }
+        Future<User> future = Executors.newSingleThreadExecutor().submit(callable);
 
+        return future.get();
+    }
 
+    private User checkUsername(String username) throws ExecutionException, InterruptedException {
+        Callable<User> callable = new Callable<User>() {
+            @Override
+            public User call() throws Exception {
+                return userViewModel.findUserByUsername(username);
+            }
+        };
 
+        Future<User> future = Executors.newSingleThreadExecutor().submit(callable);
 
+        return future.get();
     }
 }

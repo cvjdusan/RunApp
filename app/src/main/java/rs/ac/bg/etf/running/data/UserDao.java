@@ -20,9 +20,9 @@ public interface UserDao {
     LiveData<List<User>> getAllLiveData();
 
     @Query("SELECT * FROM User WHERE email = :email")
-    LiveData<User> findUserByEmail(String email);
+    User findUserByEmail(String email);
 
     @Query("SELECT * FROM User WHERE username = :username")
-    LiveData<User> findUserByUsername(String username);
+    User findUserByUsername(String username);
 
 }

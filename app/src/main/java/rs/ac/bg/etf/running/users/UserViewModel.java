@@ -11,8 +11,6 @@ import java.util.List;
 
 import rs.ac.bg.etf.running.data.User;
 import rs.ac.bg.etf.running.data.UserRepository;
-import rs.ac.bg.etf.running.data.Workout;
-import rs.ac.bg.etf.running.data.WorkoutRepository;
 
 public class UserViewModel extends ViewModel {
     private final UserRepository userRepository;
@@ -46,9 +44,9 @@ public class UserViewModel extends ViewModel {
         userRepository.insert(user);
     }
 
-    public LiveData<User> findUserByEmail(String email) {return userRepository.findUserByEmail(email); }
+    public User findUserByEmail(String email) {return userRepository.findUserByEmail(email); }
 
-    public LiveData<User> findUserByUsername(String username) {return userRepository.findUserByUsername(username); }
+    public User findUserByUsername(String username) {return userRepository.findUserByUsername(username); }
 
     public LiveData<List<User>> getUsersList() {
         return users;
