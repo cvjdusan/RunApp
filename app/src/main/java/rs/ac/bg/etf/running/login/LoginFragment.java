@@ -1,10 +1,14 @@
 package rs.ac.bg.etf.running.login;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -36,11 +40,15 @@ public class LoginFragment extends Fragment {
     private FragmentLoginBinding binding;
     private UserViewModel userViewModel;
 
+    public static final String REMEMBER_KEY = "remember";
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
+
+
     }
 
     @Nullable
@@ -48,11 +56,14 @@ public class LoginFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = FragmentLoginBinding.inflate(inflater, container, false);
 
+        Activity activity = getActivity();
+
         binding.loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String username = binding.username.getEditableText().toString();
                 String password = binding.password.getEditableText().toString();
+
 
                 try {
                     User user = getUser(username);
@@ -67,9 +78,23 @@ public class LoginFragment extends Fragment {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+            }
+        });
 
-
-
+        binding.remember.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(buttonView.isChecked()){
+                    SharedPreferences preferences = activity.getSharedPreferences("checkbox", activity.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = preferences.edit();
+                    editor.putString(REMEMBER_KEY, "true");
+                    editor.apply();
+                } else {
+                    SharedPreferences preferences = activity.getSharedPreferences("checkbox", activity.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = preferences.edit();
+                    editor.putString(REMEMBER_KEY, "false");
+                    editor.apply();
+                }
             }
         });
 
