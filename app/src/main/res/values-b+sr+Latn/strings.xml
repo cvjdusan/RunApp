@@ -76,5 +76,6 @@
     <string name="mail_exists">Email već postoji.</string>
     <string name="username_exists">Username već postoji.</string>
     <string name="mail_not_valid">Email nije u dobrom formatu.</string>
+    <string name="logout">Logout</string>
 
 </resources>

@@ -9,6 +9,7 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
@@ -22,50 +23,39 @@ import com.google.android.material.navigation.NavigationView;
 
 import dagger.hilt.android.AndroidEntryPoint;
 import rs.ac.bg.etf.running.databinding.ActivityMainBinding;
+import rs.ac.bg.etf.running.routes.RouteViewModel;
+import rs.ac.bg.etf.running.workouts.WorkoutListFragmentDirections;
 //import rs.ac.bg.etf.running.workouts.WorkoutListFragmentDirections;
 
 @AndroidEntryPoint
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener  {
+public class MainActivity extends AppCompatActivity {
 
     public static final String LOG_TAG = "running-app-example";
 
     public static final String INTENT_ACTION_WORKOUT = "rs.ac.bg.etf.running.WORKOUT";
 
     private ActivityMainBinding binding;
-
-    private ActionBar toolbar;
     private DrawerLayout drawerLayout;
-    private NavigationView navigationView;
-
-    private NavController navController;
+    private RouteViewModel routeViewModel;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        toolbar = getSupportActionBar();
-   //     navController = Navigation.findNavController(this, R.id.nav_host_container);
+        drawerLayout = findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, null,
+                R.string.app_name, R.string.app_name);
+        drawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
+     //   drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
 
-     //   NavigationUI.setupWithNavController(navigationView, navController);
-      //  NavigationUI.setupActionBarWithNavController(this, navController, drawerLayout);
+        if (savedInstanceState == null) {
+            setupNavigation();
+        }
 
-//        this.configureToolBar();
-//
-//        this.configureDrawerLayout();
-//
-//        this.configureNavigationView();
-
-
-
-
-
-//        if (savedInstanceState == null) {
-//            setupNavigation();
-//        }
-//
 //        if (getIntent().getAction().equals(INTENT_ACTION_WORKOUT)) {
-//            NavController navController = BottomNavigationUtil
+//            NavController navController = NavigationDrawerUtil
 //                    .changeNavHostFragment(R.id.nav_graph_workouts);
 //            if (navController != null) {
 //                navController.navigate(WorkoutListFragmentDirections.startWorkout());
@@ -73,62 +63,38 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 //        }
     }
 
-//    private void configureToolBar(){
-//        this.toolbar = findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
-//    }
-//
-//    // 2 - Configure Drawer Layout
-//    private void configureDrawerLayout(){
-//        this.drawerLayout = findViewById(R.id.drawerLayout);
-//        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.nav_app_bar_open_drawer_description, R.string.nav_app_bar_open_drawer_description);
-//        drawerLayout.addDrawerListener(toggle);
-//        toggle.syncState();
-//    }
-
-    // 3 - Configure NavigationView
-    private void configureNavigationView(){
-        this.navigationView = (NavigationView) findViewById(R.id.navigationView);
-        navigationView.setNavigationItemSelectedListener(this);
-    }
-
     @Override
     protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        //setupNavigation();
+        setupNavigation();
     }
 
     @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        int id = item.getItemId();
-
-        switch (id){
-            case R.navigation.navigation_routes :
-
-                break;
-            case R.navigation.navigation_calories:
-                break;
-            default:
-                break;
+    public void onBackPressed() {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
         }
-
-        this.drawerLayout.closeDrawer(GravityCompat.START);
-        return true;
     }
 
-//    private void setupNavigation() {
-//        int[] navResourceIds = new int[]{
-//                R.navigation.navigation_routes,
-//                R.navigation.navigation_workouts,
-//                R.navigation.navigation_calories
-//        };
-//        BottomNavigationUtil.setup(
-//                binding.bottomNavigation,
-//                getSupportFragmentManager(),
-//                navResourceIds,
-//                R.id.nav_host_container
-//        );
-//    }
+
+    private void setupNavigation() {
+        int[] navResourceIds = new int[]{
+                R.navigation.navigation_routes,
+                R.navigation.navigation_workouts,
+                R.navigation.navigation_calories
+        };
+
+        NavigationDrawerUtil.setup(
+                binding.navigationView,
+                getSupportFragmentManager(),
+                navResourceIds,
+                R.id.nav_host_container,
+                this
+        );
+
+    }
 
 
 }

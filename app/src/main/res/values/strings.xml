@@ -77,4 +77,5 @@
     <string name="password_short">Length of password must be greater than 4.</string>
     <string name="password_dont_match">Passwords do not match.</string>
     <string name="user_doesnt_exist">Username/password is wrong.</string>
+    <string name="logout">Logout</string>
 </resources>
