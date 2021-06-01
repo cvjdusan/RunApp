@@ -33,6 +33,7 @@ public class LoginActivity extends AppCompatActivity {
         if(isChecked.equals("true")) {
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
+            finish();
         } else {
             binding = ActivityLoginBinding.inflate(getLayoutInflater());
             setContentView(binding.getRoot());
@@ -72,5 +73,11 @@ public class LoginActivity extends AppCompatActivity {
                 }
             });
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+  ;
     }
 }

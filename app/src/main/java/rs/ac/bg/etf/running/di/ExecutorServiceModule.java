@@ -14,6 +14,6 @@ public interface ExecutorServiceModule {
 
     @Provides
     static ExecutorService provideExecutorService() {
-        return Executors.newFixedThreadPool(20);
+        return Executors.newFixedThreadPool(4);
     }
 }

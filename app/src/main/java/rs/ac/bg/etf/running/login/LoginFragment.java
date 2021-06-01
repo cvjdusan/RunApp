@@ -70,6 +70,7 @@ public class LoginFragment extends Fragment {
                     if(user != null && checkPassword(user, password)){
                         Intent intent = new Intent(getActivity(), MainActivity.class);
                         startActivity(intent);
+                        activity.finish();
                     } else {
                         Toast.makeText(getContext(), R.string.user_doesnt_exist, Toast.LENGTH_SHORT).show();
                     }

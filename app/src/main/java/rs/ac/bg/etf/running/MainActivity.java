@@ -52,15 +52,15 @@ public class MainActivity extends AppCompatActivity {
 
         if (savedInstanceState == null) {
             setupNavigation();
-        }
+        } else
 
-//        if (getIntent().getAction().equals(INTENT_ACTION_WORKOUT)) {
-//            NavController navController = NavigationDrawerUtil
-//                    .changeNavHostFragment(R.id.nav_graph_workouts);
-//            if (navController != null) {
-//                navController.navigate(WorkoutListFragmentDirections.startWorkout());
-//            }
-//        }
+        if (getIntent().getAction().equals(INTENT_ACTION_WORKOUT)) {
+            NavController navController = NavigationDrawerUtil
+                    .changeNavHostFragment(R.id.nav_graph_workouts);
+            if (navController != null) {
+                navController.navigate(WorkoutListFragmentDirections.startWorkout());
+            }
+        }
     }
 
     @Override
@@ -83,7 +83,8 @@ public class MainActivity extends AppCompatActivity {
         int[] navResourceIds = new int[]{
                 R.navigation.navigation_routes,
                 R.navigation.navigation_workouts,
-                R.navigation.navigation_calories
+                R.navigation.navigation_calories,
+                R.navigation.navigation_playlist
         };
 
         NavigationDrawerUtil.setup(

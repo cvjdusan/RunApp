@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph_navigation_playlist"
+    app:startDestination="@id/playlist_list">
+
+    <fragment
+        android:id="@+id/playlist_list"
+        android:name="rs.ac.bg.etf.running.playlist.PlaylistFragment"
+        android:label="fragment_playlist"
+        tools:layout="@layout/fragment_playlist" >
+        <action
+            android:id="@+id/action_playlistFragment_to_playlistCreateFragment"
+            app:destination="@id/playlist_create" />
+    </fragment>
+    <fragment
+        android:id="@+id/playlist_create"
+        android:name="rs.ac.bg.etf.running.playlist.PlaylistCreateFragment"
+        android:label="fragment_playlist_create"
+        tools:layout="@layout/fragment_playlist_create" />
+</navigation>
