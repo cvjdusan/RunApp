@@ -83,6 +83,13 @@
     <string name="list_of_available_music">List of available music:</string>
     <string name="create_playlist">Create playlist</string>
     <string name="select_playlist">Select playlist</string>
+    <string name="no_song">no song</string>
+    <string name="no_playlist">no playlist</string>
+    <string name="pause_button_text">Pause</string>
+    <string name="resume_button_text">Resume</string>
+    <string name="next_button_text">></string>
+    <string name="steps_text">Koraci: 0</string>
+    <string name="previous_button_text">"&lt;     "</string>
 
 
 </resources>

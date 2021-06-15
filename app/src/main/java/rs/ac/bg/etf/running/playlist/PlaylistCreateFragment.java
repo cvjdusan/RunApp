@@ -92,13 +92,13 @@ public class PlaylistCreateFragment extends Fragment {
         binding.createPlaylistButton.setOnClickListener(view -> {
 
             String name = binding.playlistLabel.getEditText().getText().toString();
-            String songs = "";
+            String songs;
 
             File files = mainActivity.getFilesDir();
             int i = 0;
             StringBuilder sb = new StringBuilder();
             for (String str : files.list()) {
-                CheckBox checkbox = (CheckBox) binding.tableMain.findViewById(i);
+                CheckBox checkbox = binding.tableMain.findViewById(i);
                 if (checkbox.isChecked())
                     sb.append(i).append('/');
                 i++;

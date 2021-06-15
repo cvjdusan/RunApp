@@ -1,5 +1,6 @@
 package rs.ac.bg.etf.running.workouts;
 
+import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -8,6 +9,8 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -51,38 +54,42 @@ public class WorkoutService extends LifecycleService {
     @Inject
     public LifecycleAwareLocator locator;
 
+
+    @Inject
+    public LifecycleAwareStepCounter stepCounter;
+
     @Override
     public void onCreate() {
         Log.d(MainActivity.LOG_TAG, "WorkoutService.onCreate()");
         super.onCreate();
 
-        getLifecycle().addObserver(motivator);
+     //   getLifecycle().addObserver(motivator);
         getLifecycle().addObserver(player);
         getLifecycle().addObserver(measurer);
         getLifecycle().addObserver(locator);
+        getLifecycle().addObserver(stepCounter);
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
         Log.d(MainActivity.LOG_TAG, "WorkoutService.onStartCommand()");
-
         createNotificationChannel();
         startForeground(NOTIFICATION_ID, getNotification());
-
         switch (intent.getAction()) {
             case INTENT_ACTION_START:
                 if (!serviceStarted) {
                     serviceStarted = true;
-                    motivator.start(this);
+                  //  motivator.start(this);
                     player.start(this);
                     measurer.start(this);
                     locator.getLocation(this);
+                    stepCounter.start(this);
                 }
                 break;
             case INTENT_ACTION_POWER:
                 if (serviceStarted) {
-                    motivator.changeMessage(this);
+                 //   motivator.changeMessage(this);
                 }
                 break;
         }

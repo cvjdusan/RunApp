@@ -3,7 +3,6 @@ package rs.ac.bg.etf.running;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -12,7 +11,6 @@ import com.google.android.material.tabs.TabLayout;
 
 import dagger.hilt.android.AndroidEntryPoint;
 import rs.ac.bg.etf.running.databinding.ActivityLoginBinding;
-import rs.ac.bg.etf.running.databinding.ActivityMainBinding;
 import rs.ac.bg.etf.running.login.LoginAdapter;
 import rs.ac.bg.etf.running.login.LoginFragment;
 
@@ -28,7 +26,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         SharedPreferences preferences = getSharedPreferences("checkbox", MODE_PRIVATE);
-        String isChecked = preferences.getString(LoginFragment.REMEMBER_KEY, "");
+        String isChecked = preferences.getString(LoginFragment.REMEMBER_USER_KEY, "");
 
         if(isChecked.equals("true")) {
             Intent intent = new Intent(this, MainActivity.class);

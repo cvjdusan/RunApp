@@ -1,10 +1,13 @@
 package rs.ac.bg.etf.running.workouts;
 
 import android.Manifest;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.activity.OnBackPressedCallback;
@@ -13,6 +16,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -24,6 +28,7 @@ import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import java.util.Date;
 import java.util.Timer;
@@ -48,14 +53,16 @@ public class WorkoutStartFragment extends Fragment {
 
     private Timer timer;
     private SharedPreferences sharedPreferences;
+    private BroadcastReceiver updateReceiver;
 
     private final ActivityResultLauncher<String> requestPermissionLauncher =
             registerForActivityResult(
                     new ActivityResultContracts.RequestPermission(),
                     isPermissionGranted -> {
-                        if (isPermissionGranted) {
-                            startWorkout(new Date().getTime());
-                        }
+                        //TODO: Ovo mozda srediti da ne mora da se klikne
+                       // if (isPermissionGranted) {
+                         //   startWorkout(new Date().getTime());
+                        //}
                     });
 
     public WorkoutStartFragment() {
@@ -71,8 +78,26 @@ public class WorkoutStartFragment extends Fragment {
 
         sharedPreferences = mainActivity
                 .getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+
+        IntentFilter filter = new IntentFilter();
+
+        filter.addAction("stepCounter");
+
+        updateReceiver = new BroadcastReceiver() {
+
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                TextView textView = mainActivity.findViewById(R.id.steps);
+                String stepsString = textView.getText().toString();
+                int stepsNum = Integer.parseInt(stepsString.split(":")[1].substring(1));
+                stepsNum++;
+                textView.setText("Steps: " + stepsNum);
+            }
+        };
+        mainActivity.registerReceiver(updateReceiver, filter);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.Q)
     @Override
     public View onCreateView(
             @NonNull LayoutInflater inflater,
@@ -88,22 +113,24 @@ public class WorkoutStartFragment extends Fragment {
         }
 
         binding.start.setOnClickListener(view -> {
+
             if (ActivityCompat.checkSelfPermission(
                     mainActivity, Manifest.permission.ACCESS_FINE_LOCATION) !=
                     PackageManager.PERMISSION_GRANTED) {
                 requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION);
             } else {
-                startWorkout(new Date().getTime());
+                if(ActivityCompat.checkSelfPermission(mainActivity,
+                        Manifest.permission.ACTIVITY_RECOGNITION) == PackageManager.PERMISSION_DENIED){
+                    requestPermissionLauncher.launch(Manifest.permission.ACTIVITY_RECOGNITION);
+                } else {
+                    startWorkout(new Date().getTime());
+                }
             }
+
         });
+
         binding.finish.setOnClickListener(view -> finishWorkout());
         binding.cancel.setOnClickListener(view -> cancelWorkout());
-        binding.power.setOnClickListener(view -> {
-            Intent intent = new Intent();
-            intent.setClass(mainActivity, WorkoutService.class);
-            intent.setAction(WorkoutService.INTENT_ACTION_POWER);
-            mainActivity.startService(intent);
-        });
 
         mainActivity.getOnBackPressedDispatcher().addCallback(
                 getViewLifecycleOwner(),
@@ -127,13 +154,14 @@ public class WorkoutStartFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         timer.cancel();
+        mainActivity.unregisterReceiver(updateReceiver);
     }
 
     private void startWorkout(long startTimestamp) {
         binding.start.setEnabled(false);
         binding.finish.setEnabled(true);
         binding.cancel.setEnabled(true);
-        binding.power.setEnabled(true);
+
 
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putLong(START_TIMESTAMP_KEY, startTimestamp);

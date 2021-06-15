@@ -12,6 +12,7 @@ import java.util.List;
 import rs.ac.bg.etf.running.MainActivity;
 import rs.ac.bg.etf.running.data.Playlist;
 import rs.ac.bg.etf.running.data.PlaylistRepository;
+import rs.ac.bg.etf.running.users.Session;
 
 public class PlaylistViewModel extends ViewModel {
     private final PlaylistRepository playlistRepository;
@@ -31,9 +32,7 @@ public class PlaylistViewModel extends ViewModel {
 
         playlists = Transformations.switchMap(
                 savedStateHandle.getLiveData(PLAYLIST_KEY, 0),
-                user -> {
-                    return playlistRepository.getAllLiveData("dusan");
-                }
+                user -> playlistRepository.getAllLiveData(Session.getCurrentUser().getUsername())
         );
     }
 

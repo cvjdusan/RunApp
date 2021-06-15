@@ -35,7 +35,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:background="#3d455b"
-            android:layout_alignParentLeft="true" >
+            android:layout_alignParentStart="true" >
 
             <HorizontalScrollView
                 android:id="@+id/hscrll1"
@@ -44,7 +44,7 @@
 
                 <RelativeLayout
                     android:id="@+id/RelativeLayout1"
-                    android:layout_width="fill_parent"
+                    android:layout_width="wrap_content"
                     android:layout_gravity="center"
                     android:layout_height="fill_parent"
                     android:orientation="vertical" >
