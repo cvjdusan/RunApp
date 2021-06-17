@@ -21,6 +21,10 @@
             android:icon="@drawable/baseline_directions_run_black_48"
             android:title="@string/playlist" />
 
+        <item android:id="@id/nav_graph_alarm"
+            android:icon="@drawable/baseline_directions_run_black_48"
+            android:title="@string/alarm" />
+
     </group>
 
 </menu>

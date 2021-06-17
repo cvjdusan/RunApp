@@ -5,14 +5,28 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
+import android.widget.Toast;
+
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import dagger.hilt.android.AndroidEntryPoint;
+import rs.ac.bg.etf.running.data.User;
 import rs.ac.bg.etf.running.databinding.ActivityMainBinding;
+import rs.ac.bg.etf.running.login.LoginFragment;
 import rs.ac.bg.etf.running.routes.RouteViewModel;
 import rs.ac.bg.etf.running.users.Session;
+import rs.ac.bg.etf.running.users.UserViewModel;
 import rs.ac.bg.etf.running.workouts.WorkoutListFragmentDirections;
 //import rs.ac.bg.etf.running.workouts.WorkoutListFragmentDirections;
 
@@ -26,12 +40,13 @@ public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
     private DrawerLayout drawerLayout;
     private RouteViewModel routeViewModel;
+    private UserViewModel userViewModel;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
+        userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
         drawerLayout = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, null,
                 R.string.app_name, R.string.app_name);
@@ -40,6 +55,21 @@ public class MainActivity extends AppCompatActivity {
      //   drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
 
         Session.setMainActivity(this);
+        createNotificationChannel();
+        if(Session.getCurrentUser() == null){
+            SharedPreferences mPrefs = getSharedPreferences("username", MODE_PRIVATE);
+            String username = mPrefs.getString(LoginFragment.USERNAME_KEY, "");
+            try {
+                User user = getUser(username);
+                Session.setCurrentUser(user);
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        Toast.makeText(this, Session.getCurrentUser().getUsername() + "", Toast.LENGTH_SHORT).show();
 
         if (savedInstanceState == null) {
             setupNavigation();
@@ -69,13 +99,21 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private User getUser(String username) throws ExecutionException, InterruptedException {
+        Callable<User> callable = () -> userViewModel.findUserByUsername(username);
+
+        Future<User> future = Executors.newSingleThreadExecutor().submit(callable);
+
+        return future.get();
+    }
 
     private void setupNavigation() {
         int[] navResourceIds = new int[]{
                 R.navigation.navigation_routes,
                 R.navigation.navigation_workouts,
                 R.navigation.navigation_calories,
-                R.navigation.navigation_playlist
+                R.navigation.navigation_playlist,
+                R.navigation.navigation_alarm
         };
 
         NavigationDrawerUtil.setup(
@@ -86,6 +124,20 @@ public class MainActivity extends AppCompatActivity {
                 this
         );
 
+    }
+
+    private void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "AlarmChannel";
+            String description = "Channel for alarm";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel("notifyAlarm",
+                    name, importance);
+            channel.setDescription(description);
+
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
     }
 
 }

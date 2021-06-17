@@ -35,14 +35,12 @@ public class LoginFragment extends Fragment {
     private UserViewModel userViewModel;
 
     public static final String REMEMBER_USER_KEY = "remember";
-
+    public static final String USERNAME_KEY = "username";
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
-
-
     }
 
     @Nullable
@@ -52,8 +50,6 @@ public class LoginFragment extends Fragment {
 
         Activity activity = getActivity();
 
-
-
         binding.loginButton.setOnClickListener(view -> {
             String username = binding.username.getEditableText().toString();
             String password = binding.password.getEditableText().toString();
@@ -61,7 +57,11 @@ public class LoginFragment extends Fragment {
             try {
                 User user = getUser(username);
                 if(user != null && checkPassword(user, password)){
-                    Session.setCurrentUser(user);
+                    SharedPreferences preferences = activity.getSharedPreferences("username", activity.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = preferences.edit();
+                    editor.putString(USERNAME_KEY, username);
+                    editor.apply();
+
                     Intent intent = new Intent(getActivity(), MainActivity.class);
                     startActivity(intent);
                     activity.finish();

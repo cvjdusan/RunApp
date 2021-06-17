@@ -14,6 +14,7 @@ import rs.ac.bg.etf.running.data.Playlist;
 import rs.ac.bg.etf.running.data.Workout;
 import rs.ac.bg.etf.running.databinding.ViewHolderPlaylistBinding;
 import rs.ac.bg.etf.running.databinding.ViewHolderWorkoutBinding;
+import rs.ac.bg.etf.running.users.Session;
 import rs.ac.bg.etf.running.workouts.DateTimeUtil;
 import rs.ac.bg.etf.running.workouts.WorkoutAdapter;
 
@@ -63,7 +64,7 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.Playli
         public void bind(Playlist p) {
             binding.playlistLabel.setText(p.getName());
             binding.buttonSelect.setOnClickListener(l -> {
-                // nesto ovde
+                Session.setCurrentPlaylist(p);
             });
         }
     }

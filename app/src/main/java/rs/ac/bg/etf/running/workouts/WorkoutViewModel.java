@@ -45,6 +45,12 @@ public class WorkoutViewModel extends ViewModel {
         savedStateHandle.set(SORTED_KEY, sorted = !sorted);
     }
 
+    public void sort() {
+        savedStateHandle.set(SORTED_KEY, sorted = true);
+    }
+
+    public void unsort() { savedStateHandle.set(SORTED_KEY, sorted = false); }
+
     public void insertWorkout(Workout workout) {
         workoutRepository.insert(workout);
     }

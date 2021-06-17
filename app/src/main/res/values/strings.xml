@@ -17,7 +17,7 @@
 
     <!-- Workouts -->
     <string name="workout_list_toolbar_title">Workouts</string>
-    <string name="workout_list_options_menu_title_sort">Sort</string>
+    <string name="workout_list_options_menu_title_sort">Sort or filter</string>
     <string name="workout_list_fab_text_start">Start</string>
     <string name="workout_list_fab_text_create">Create</string>
     <string name="workout_create_toolbar_title">New Workout</string>
@@ -93,5 +93,8 @@
         &lt;-
     </string>
     <string name="steps_text">Steps: 0</string>
+    <string name="sort_option">Sort?</string>
+    <string name="button_ok">Ok</string>
+    <string name="alarm">Create alarm</string>
 
 </resources>

@@ -22,6 +22,7 @@ import rs.ac.bg.etf.running.databinding.FragmentWorkoutListBinding;
 @AndroidEntryPoint
 public class WorkoutListFragment extends Fragment {
 
+    public static final String DIALOG_KEY = "dialog-key";
     private FragmentWorkoutListBinding binding;
     private WorkoutViewModel workoutViewModel;
     private NavController navController;
@@ -51,8 +52,22 @@ public class WorkoutListFragment extends Fragment {
         binding.toolbar.setOnMenuItemClickListener(menuItem -> {
             switch (menuItem.getItemId()) {
                 case R.id.workout_menu_item_sort:
-                    workoutViewModel.invertSorted();
-                    return true;
+                    new FilterDialogFragment().show(getChildFragmentManager(), null);
+
+                    getChildFragmentManager().setFragmentResultListener(DIALOG_KEY, this,
+                            (requestKey, result) -> {
+                                String res = (String) result.getSerializable(FilterDialogFragment.SET_FILTER_SORT_KEY);
+
+                                boolean sort = false;
+                                if (res.equals("1")) sort = true;
+
+                                if (sort)
+                                    workoutViewModel.sort();
+                                else
+                                    workoutViewModel.unsort();
+
+                            });
+                    return false;
             }
             return false;
         });

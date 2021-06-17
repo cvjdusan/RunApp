@@ -4,6 +4,7 @@ import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
@@ -21,6 +22,8 @@ import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LifecycleService;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicReference;
@@ -30,17 +33,32 @@ import javax.inject.Inject;
 import dagger.hilt.android.AndroidEntryPoint;
 import rs.ac.bg.etf.running.MainActivity;
 import rs.ac.bg.etf.running.R;
+import rs.ac.bg.etf.running.users.Session;
 
 @AndroidEntryPoint
 public class WorkoutService extends LifecycleService {
 
     public static final String INTENT_ACTION_START = "rs.ac.bg.etf.running.workouts.START";
     public static final String INTENT_ACTION_POWER = "rs.ac.bg.etf.running.workouts.POWER";
+    public static final String INTENT_ACTION_LOCATION = "rs.ac.bg.etf.running.workouts.LOCATION";
 
     private static final String NOTIFICATION_CHANNEL_ID = "workout-notification-channel";
     private static final int NOTIFICATION_ID = 1;
+    private static Context context;
 
     private boolean serviceStarted = false;
+
+    static int indexSongs = 1;
+    public static WorkoutService staticService;
+    private Timer timer;
+
+    public static int getIndexSongs() {
+        return indexSongs;
+    }
+
+    public static void setIndexSongs(int indexSongs) {
+        WorkoutService.indexSongs = indexSongs;
+    }
 
     @Inject
     public LifecycleAwareMotivator motivator;
@@ -54,14 +72,23 @@ public class WorkoutService extends LifecycleService {
     @Inject
     public LifecycleAwareLocator locator;
 
-
     @Inject
     public LifecycleAwareStepCounter stepCounter;
+
+    public static LifecycleAwareLocator getStaticLocator() {
+        return loc;
+    }
+
+    public static WorkoutService getStaticService(){
+        return staticService;
+    }
 
     @Override
     public void onCreate() {
         Log.d(MainActivity.LOG_TAG, "WorkoutService.onCreate()");
         super.onCreate();
+
+        timer = new Timer();
 
      //   getLifecycle().addObserver(motivator);
         getLifecycle().addObserver(player);
@@ -70,12 +97,20 @@ public class WorkoutService extends LifecycleService {
         getLifecycle().addObserver(stepCounter);
     }
 
+    private static LifecycleAwareLocator loc;
+
+    public static void startLocator(){
+        loc.getLocation(context);
+    }
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
         Log.d(MainActivity.LOG_TAG, "WorkoutService.onStartCommand()");
-        createNotificationChannel();
-        startForeground(NOTIFICATION_ID, getNotification());
+        if (intent.getAction() == INTENT_ACTION_START) {
+            createNotificationChannel();
+            startForeground(NOTIFICATION_ID, getNotification());
+        }
         switch (intent.getAction()) {
             case INTENT_ACTION_START:
                 if (!serviceStarted) {
@@ -85,16 +120,92 @@ public class WorkoutService extends LifecycleService {
                     measurer.start(this);
                     locator.getLocation(this);
                     stepCounter.start(this);
+                    setStaticService(this);
+                    setStaticLocator(locator);
+                    timer.schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            locator.getLocation(WorkoutService.getStaticService());
+                        }
+                    }, 0, 5000);
                 }
+                player.getMediaPlayer().setOnCompletionListener(mp -> {
+                    player.getMediaPlayer().reset();
+                    String songs = Session.getCurrentPlaylist().getMusicList();
+                    String[] songsSplit = songs.split("/");
+                    File filesDir = Session.getMainActivity().getFilesDir();
+                    int indexLambda = 0;
+                    String songForShow = "";
+                    if(indexSongs < songsSplit.length)
+                    {
+                        int num = Integer.parseInt(songsSplit[indexSongs]);
+                        for (String strFile : filesDir.list()) {
+                            if (num == indexLambda) {
+                                try {
+                                    songForShow = strFile;
+                                    player.getMediaPlayer().setDataSource(filesDir.getAbsolutePath() + File.separator + strFile);
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                            indexLambda++;
+                        }
+                        player.getMediaPlayer().setOnPreparedListener(mp1 -> {
+                            int duration = player.getMediaPlayer().getDuration();
+                            player.getMediaPlayer().start();
+
+                            int seconds = (int) ((duration / 1000) % 60);
+                            int minutes = (int) ((duration / (1000 * 60)) % 60);
+
+                            StringBuilder remaining = new StringBuilder();
+                            remaining.append(String.format("%02d", minutes)).append(":");
+                            remaining.append(String.format("%02d", seconds));
+
+                            TextView tw = (TextView) Session.getMainActivity().findViewById(R.id.remaining);
+                            tw.setText(remaining);
+                        });
+                        player.getMediaPlayer().prepareAsync();
+
+                        TextView tw = (TextView) Session.getMainActivity().findViewById(R.id.current_playlist);
+                        tw.setText(getResources().getString(R.string.no_playlist) + " " + Session.getCurrentPlaylist().getName());
+                        tw = (TextView) Session.getMainActivity().findViewById(R.id.current_song);
+                        tw.setText(getResources().getString(R.string.no_song) + " " + songForShow);
+
+                        indexSongs++;
+                    }
+                    else
+                    {
+                        //MainActivity.setMusicPlaying(0);
+                        indexSongs = 1;
+                        TextView tw = (TextView) Session.getMainActivity().findViewById(R.id.current_song);
+                        tw.setText(getResources().getString(R.string.no_song));
+                        player.getMediaPlayer().release();
+                    }
+                });
                 break;
             case INTENT_ACTION_POWER:
                 if (serviceStarted) {
                  //   motivator.changeMessage(this);
                 }
                 break;
+            case INTENT_ACTION_LOCATION:
+
+                setStaticService(this);
+                setStaticLocator(locator);
+                locator.getLocation(this);
+
+                return START_STICKY;
         }
 
-        return START_STICKY;
+        return START_REDELIVER_INTENT;
+    }
+
+    public static void setStaticLocator(LifecycleAwareLocator locator) {
+        loc = locator;
+    }
+
+    private void setStaticService(WorkoutService workoutService) {
+        staticService = workoutService;
     }
 
     @Nullable

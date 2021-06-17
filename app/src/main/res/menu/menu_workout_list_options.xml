@@ -6,6 +6,7 @@
         android:id="@+id/workout_menu_item_sort"
         android:icon="@drawable/baseline_sort_24"
         android:title="@string/workout_list_options_menu_title_sort"
-        app:showAsAction="always" />
+        app:showAsAction="never" />
+
 
 </menu>
