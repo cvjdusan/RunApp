@@ -12,6 +12,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import rs.ac.bg.etf.running.MainActivity;
+import rs.ac.bg.etf.running.users.Session;
 
 public class OpenWeatherMapService {
 
@@ -48,6 +49,7 @@ public class OpenWeatherMapService {
                     @NonNull Response<CurrentWeatherModel> response) {
                 if (response.isSuccessful()) {
                     CurrentWeatherModel currentWeatherModel = response.body();
+                    Session.setWeatherModel(currentWeatherModel);
                     Log.d(MainActivity.LOG_TAG, currentWeatherModel.toString());
                 }
             }

@@ -29,6 +29,7 @@
         </activity>
 
         <service android:name=".workouts.WorkoutService" />
+        <receiver android:name=".alarm.AlarmBroadcast" />
     </application>
 
 </manifest>
