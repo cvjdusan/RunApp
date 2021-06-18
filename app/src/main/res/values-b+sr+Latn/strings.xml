@@ -93,6 +93,7 @@
     <string name="sort_option">Sort?</string>
     <string name="button_ok">Ok</string>
     <string name="alarm">Create alarm</string>
+    <string name="your_stats">Your stats:</string>
 
 
 </resources>

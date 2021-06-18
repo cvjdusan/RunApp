@@ -25,6 +25,7 @@ import rs.ac.bg.etf.running.MainActivity;
 import rs.ac.bg.etf.running.R;
 import rs.ac.bg.etf.running.data.Workout;
 import rs.ac.bg.etf.running.databinding.FragmentWorkoutCreateBinding;
+import rs.ac.bg.etf.running.users.Session;
 
 @AndroidEntryPoint
 public class WorkoutCreateFragment extends Fragment {
@@ -81,7 +82,9 @@ public class WorkoutCreateFragment extends Fragment {
                         date,
                         label,
                         distance.doubleValue(),
-                        duration.doubleValue()
+                        duration.doubleValue(),
+                        (int) (distance.doubleValue() * 1000 / 1.31),
+                        Session.getCurrentUser().getUsername()
                 ));
                 navController.navigateUp();
             }

@@ -320,12 +320,16 @@ public class WorkoutStartFragment extends Fragment {
         long startTimestamp = sharedPreferences.getLong(START_TIMESTAMP_KEY, new Date().getTime());
         long elapsed = new Date().getTime() - startTimestamp;
         double minutes = elapsed / (1000.0 * 60);
+        String s = binding.steps.getText().toString();
+        int steps = Integer.parseInt(s.split(":")[1].substring(1));
         workoutViewModel.insertWorkout(new Workout(
                 0,
                 new Date(),
                 getText(R.string.workout_label).toString(),
                 0.2 * minutes,
-                minutes
+                minutes,
+                steps,
+                Session.getCurrentUser().getUsername()
         ));
         stopWorkout();
     }

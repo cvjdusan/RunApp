@@ -15,13 +15,40 @@ public class Workout {
     private String label;
     private double distance;
     private double duration;
+    private int steps;
 
-    public Workout(long id, Date date, String label, double distance, double duration) {
+    private String username;
+
+    public Workout(long id,
+                   Date date,
+                   String label,
+                   double distance,
+                   double duration,
+                   int steps,
+                    String username) {
         this.id = id;
         this.date = date;
         this.label = label;
         this.distance = distance;
         this.duration = duration;
+        this.steps = steps;
+        this.username = username;
+    }
+
+    public int getSteps() {
+        return steps;
+    }
+
+    public void setSteps(int steps) {
+        this.steps = steps;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public long getId() {

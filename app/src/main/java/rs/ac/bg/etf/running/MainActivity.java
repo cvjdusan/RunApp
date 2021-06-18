@@ -113,7 +113,8 @@ public class MainActivity extends AppCompatActivity {
                 R.navigation.navigation_workouts,
                 R.navigation.navigation_calories,
                 R.navigation.navigation_playlist,
-                R.navigation.navigation_alarm
+                R.navigation.navigation_alarm,
+                R.navigation.navigation_stats
         };
 
         NavigationDrawerUtil.setup(
