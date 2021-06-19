@@ -41,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
     private DrawerLayout drawerLayout;
     private RouteViewModel routeViewModel;
     private UserViewModel userViewModel;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,25 +70,26 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        Toast.makeText(this, Session.getCurrentUser().getUsername() + "", Toast.LENGTH_SHORT).show();
+      //  Toast.makeText(this, Session.getCurrentUser().getUsername() + "", Toast.LENGTH_SHORT).show();
 
         if (savedInstanceState == null) {
-            setupNavigation();
-        } else
-
-        if (getIntent().getAction().equals(INTENT_ACTION_WORKOUT)) {
-            NavController navController = NavigationDrawerUtil
-                    .changeNavHostFragment(R.id.nav_graph_workouts);
-            if (navController != null) {
-                navController.navigate(WorkoutListFragmentDirections.startWorkout());
-            }
+            setupNavigation(true);
+        } else {
+            // TODO: CHANGE
+//            if (getIntent().getAction().equals(INTENT_ACTION_WORKOUT)) {
+//                NavController navController = NavigationDrawerUtil
+//                        .changeNavHostFragment(R.id.nav_graph_workouts);
+//                if (navController != null) {
+//                    navController.navigate(WorkoutListFragmentDirections.startWorkout());
+//                }
+//            }
         }
     }
 
     @Override
     protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        setupNavigation();
+        setupNavigation(false);
     }
 
     @Override
@@ -107,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
         return future.get();
     }
 
-    private void setupNavigation() {
+    private void setupNavigation(boolean firstTime) {
         int[] navResourceIds = new int[]{
                 R.navigation.navigation_routes,
                 R.navigation.navigation_workouts,
@@ -122,7 +124,8 @@ public class MainActivity extends AppCompatActivity {
                 getSupportFragmentManager(),
                 navResourceIds,
                 R.id.nav_host_container,
-                this
+                this,
+                firstTime
         );
 
     }

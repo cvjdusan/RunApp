@@ -47,20 +47,20 @@ public class LifecycleAwarePlayer implements DefaultLifecycleObserver {
                     int dur = mediaPlayer.getDuration();
                     mediaPlayer.start();
 
-                    int seconds = (int) ((dur / 1000) % 60);
-                    int minutes = (int) ((dur / (1000 * 60)) % 60);
+                    int seconds = ((dur / 1000) % 60);
+                    int minutes = ((dur / (1000 * 60)) % 60);
 
                     StringBuilder songTime = new StringBuilder();
                     songTime.append(String.format("%02d", minutes)).append(":");
                     songTime.append(String.format("%02d", seconds));
 
-                    TextView tw = (TextView) Session.getMainActivity().findViewById(R.id.remaining);
+                    TextView tw = Session.getMainActivity().findViewById(R.id.remaining);
                     tw.setText(songTime);
                 });
                 mediaPlayer.prepareAsync();
-                TextView tw = (TextView) Session.getMainActivity().findViewById(R.id.current_playlist);
+                TextView tw = Session.getMainActivity().findViewById(R.id.current_playlist);
                 tw.setText(Session.getMainActivity().getResources().getString(R.string.no_playlist) + " " + Session.getCurrentPlaylist().getName());
-                tw = (TextView) Session.getMainActivity().findViewById(R.id.current_song);
+                tw = Session.getMainActivity().findViewById(R.id.current_song);
                 tw.setText(Session.getMainActivity().getResources().getString(R.string.no_song) + " " + song);
             } catch (IOException e) {
                 e.printStackTrace();

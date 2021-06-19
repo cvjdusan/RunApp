@@ -12,7 +12,6 @@ import android.os.Build;
 import android.os.Bundle;
 
 import androidx.activity.OnBackPressedCallback;
-import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
@@ -67,9 +66,9 @@ public class WorkoutStartFragment extends Fragment {
                     new ActivityResultContracts.RequestPermission(),
                     isPermissionGranted -> {
                         //TODO: Ovo mozda srediti da ne mora da se klikne
-                       // if (isPermissionGranted) {
-                         //   startWorkout(new Date().getTime());
-                        //}
+                        if (isPermissionGranted) {
+                            startWorkout(new Date().getTime());
+                        }
                     });
 
     public WorkoutStartFragment() {
@@ -312,7 +311,7 @@ public class WorkoutStartFragment extends Fragment {
 
         Intent intent = new Intent();
         intent.setClass(mainActivity, WorkoutService.class);
-        intent.setAction(WorkoutService.INTENT_ACTION_START);
+        intent.setAction(WorkoutService.INTENT_ACTION_START_TRAINING);
         mainActivity.startService(intent);
     }
 

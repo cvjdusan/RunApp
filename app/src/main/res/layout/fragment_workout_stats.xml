@@ -23,7 +23,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toolbar"
-        android:textSize="32dp"
+        android:textSize="32sp"
         android:layout_marginTop="40dp"
 
         />
@@ -68,7 +68,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@id/label_2"
         app:layout_constraintTop_toBottomOf="@id/number_of_steps"
-        android:text="Number of steps"
+        android:text="@string/number_of_steps"
         />
 
     <TextView
@@ -78,7 +78,7 @@
         app:layout_constraintLeft_toRightOf="@id/label_1"
         app:layout_constraintTop_toBottomOf="@id/number_of_steps"
         app:layout_constraintRight_toLeftOf="@id/label_3"
-        android:text="Average time"
+        android:text="@string/average_time"
         />
 
     <TextView
@@ -88,18 +88,18 @@
         app:layout_constraintLeft_toRightOf="@id/label_2"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/number_of_steps"
-        android:text="Average distance"
+        android:text="@string/average_distance"
         />
 
     <TextView
         android:id="@+id/header2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Challanges:"
+        android:text="@string/challanges"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/label_1"
-        android:textSize="32dp"
+        android:textSize="32sp"
         android:layout_marginTop="50dp"
         />
 
@@ -110,8 +110,8 @@
         app:layout_constraintLeft_toRightOf="@id/label_11"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/header2"
-        android:textSize="120dp"
-        android:text="•"
+        android:textSize="120sp"
+        android:text="@string/circle"
         />
 
     <TextView
@@ -121,8 +121,8 @@
         app:layout_constraintLeft_toRightOf="@id/label_22"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/number_of_steps_medal"
-        android:textSize="120dp"
-        android:text="•"
+        android:textSize="120sp"
+        android:text="@string/circle"
         />
 
     <TextView
@@ -132,8 +132,8 @@
         app:layout_constraintLeft_toRightOf="@id/label_33"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/average_time_medal"
-        android:textSize="120dp"
-        android:text="•"
+        android:textSize="120sp"
+        android:text="@string/circle"
         />
 
     <TextView

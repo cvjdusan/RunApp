@@ -28,11 +28,14 @@ public class NavigationDrawerUtil {
             NavigationView navigationView,
             FragmentManager fragmentManager,
             int[] navResourceIds,
-            int containerId, MainActivity mainActivity) {
+            int containerId,
+            MainActivity mainActivity,
+            boolean firstTime) {
         Map<Integer, String> navGraphIdToTagMap = new HashMap<>();
         int homeNavGraphId = 0;
 
-        navigationView.setCheckedItem(R.id.nav_graph_routes);
+        if(firstTime)
+            navigationView.setCheckedItem(R.id.nav_graph_routes);
 
         for (int i = 0; i < navResourceIds.length; i++) {
             String tag = "navHostFragment#" + i;
@@ -50,8 +53,6 @@ public class NavigationDrawerUtil {
             if (i == 0) {
                 homeNavGraphId = navGraphId;
             }
-
-
 
             if (navigationView.getCheckedItem().getItemId() == navGraphId) {
                 attachNavHostFragment(fragmentManager, navHostFragment, i == 0);

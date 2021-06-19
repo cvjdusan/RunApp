@@ -1,18 +1,12 @@
 package rs.ac.bg.etf.running.workouts;
 
-import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.PendingIntent;
-import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Handler;
 import android.os.IBinder;
-import android.os.Looper;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -25,8 +19,6 @@ import androidx.lifecycle.LifecycleService;
 import java.io.File;
 import java.io.IOException;
 import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.atomic.AtomicReference;
 
 import javax.inject.Inject;
 
@@ -38,7 +30,7 @@ import rs.ac.bg.etf.running.users.Session;
 @AndroidEntryPoint
 public class WorkoutService extends LifecycleService {
 
-    public static final String INTENT_ACTION_START = "rs.ac.bg.etf.running.workouts.START";
+    public static final String INTENT_ACTION_START_TRAINING = "rs.ac.bg.etf.running.workouts.START";
     public static final String INTENT_ACTION_POWER = "rs.ac.bg.etf.running.workouts.POWER";
     public static final String INTENT_ACTION_LOCATION = "rs.ac.bg.etf.running.workouts.LOCATION";
 
@@ -75,14 +67,6 @@ public class WorkoutService extends LifecycleService {
     @Inject
     public LifecycleAwareStepCounter stepCounter;
 
-    public static LifecycleAwareLocator getStaticLocator() {
-        return loc;
-    }
-
-    public static WorkoutService getStaticService(){
-        return staticService;
-    }
-
     @Override
     public void onCreate() {
         Log.d(MainActivity.LOG_TAG, "WorkoutService.onCreate()");
@@ -95,24 +79,20 @@ public class WorkoutService extends LifecycleService {
         getLifecycle().addObserver(measurer);
         getLifecycle().addObserver(locator);
         getLifecycle().addObserver(stepCounter);
-    }
 
-    private static LifecycleAwareLocator loc;
-
-    public static void startLocator(){
-        loc.getLocation(context);
+        context = this;
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
         Log.d(MainActivity.LOG_TAG, "WorkoutService.onStartCommand()");
-        if (intent.getAction() == INTENT_ACTION_START) {
+        if (intent.getAction() == INTENT_ACTION_START_TRAINING) {
             createNotificationChannel();
             startForeground(NOTIFICATION_ID, getNotification());
         }
         switch (intent.getAction()) {
-            case INTENT_ACTION_START:
+            case INTENT_ACTION_START_TRAINING:
                 if (!serviceStarted) {
                     serviceStarted = true;
                   //  motivator.start(this);
@@ -120,14 +100,6 @@ public class WorkoutService extends LifecycleService {
                     measurer.start(this);
                     locator.getLocation(this);
                     stepCounter.start(this);
-                    setStaticService(this);
-                    setStaticLocator(locator);
-                    timer.schedule(new TimerTask() {
-                        @Override
-                        public void run() {
-                            locator.getLocation(WorkoutService.getStaticService());
-                        }
-                    }, 0, 5000);
                 }
                 player.getMediaPlayer().setOnCompletionListener(mp -> {
                     player.getMediaPlayer().reset();
@@ -136,8 +108,7 @@ public class WorkoutService extends LifecycleService {
                     File filesDir = Session.getMainActivity().getFilesDir();
                     int indexLambda = 0;
                     String songForShow = "";
-                    if(indexSongs < songsSplit.length)
-                    {
+                    if(indexSongs < songsSplit.length) {
                         int num = Integer.parseInt(songsSplit[indexSongs]);
                         for (String strFile : filesDir.list()) {
                             if (num == indexLambda) {
@@ -154,21 +125,21 @@ public class WorkoutService extends LifecycleService {
                             int duration = player.getMediaPlayer().getDuration();
                             player.getMediaPlayer().start();
 
-                            int seconds = (int) ((duration / 1000) % 60);
-                            int minutes = (int) ((duration / (1000 * 60)) % 60);
+                            int seconds = ((duration / 1000) % 60);
+                            int minutes = ((duration / (1000 * 60)) % 60);
 
                             StringBuilder remaining = new StringBuilder();
                             remaining.append(String.format("%02d", minutes)).append(":");
                             remaining.append(String.format("%02d", seconds));
 
-                            TextView tw = (TextView) Session.getMainActivity().findViewById(R.id.remaining);
+                            TextView tw = Session.getMainActivity().findViewById(R.id.remaining);
                             tw.setText(remaining);
                         });
                         player.getMediaPlayer().prepareAsync();
 
-                        TextView tw = (TextView) Session.getMainActivity().findViewById(R.id.current_playlist);
+                        TextView tw = Session.getMainActivity().findViewById(R.id.current_playlist);
                         tw.setText(getResources().getString(R.string.no_playlist) + " " + Session.getCurrentPlaylist().getName());
-                        tw = (TextView) Session.getMainActivity().findViewById(R.id.current_song);
+                        tw = Session.getMainActivity().findViewById(R.id.current_song);
                         tw.setText(getResources().getString(R.string.no_song) + " " + songForShow);
 
                         indexSongs++;
@@ -189,9 +160,13 @@ public class WorkoutService extends LifecycleService {
                 }
                 break;
             case INTENT_ACTION_LOCATION:
-
-                setStaticService(this);
-                setStaticLocator(locator);
+//                setStaticService(this);
+//                timer.schedule(new TimerTask() {
+//                    @Override
+//                    public void run() {
+//                        locator.getLocation(WorkoutService.getStaticService());
+//                    }
+//                }, 0, 5000);
                 locator.getLocation(this);
 
                 return START_STICKY;
@@ -200,12 +175,12 @@ public class WorkoutService extends LifecycleService {
         return START_REDELIVER_INTENT;
     }
 
-    public static void setStaticLocator(LifecycleAwareLocator locator) {
-        loc = locator;
-    }
-
     private void setStaticService(WorkoutService workoutService) {
         staticService = workoutService;
+    }
+
+    public static WorkoutService getStaticService(){
+        return staticService;
     }
 
     @Nullable

@@ -51,7 +51,6 @@ public class AlarmFragment extends Fragment {
             @NonNull LayoutInflater inflater,
             ViewGroup container,
             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         binding = FragmentAlarmBinding.inflate(inflater, container, false);
         String[] weekdays = getResources().getStringArray(R.array.days);
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(
@@ -60,6 +59,16 @@ public class AlarmFragment extends Fragment {
                 weekdays);
 
         binding.spinner.setAdapter(arrayAdapter);
+
+        int[] days = {
+                Calendar.MONDAY,
+                Calendar.TUESDAY,
+                Calendar.WEDNESDAY,
+                Calendar.THURSDAY,
+                Calendar.FRIDAY,
+                Calendar.SATURDAY,
+                Calendar.SUNDAY
+        };
 
         binding.confirm.setOnClickListener(view -> {
             Intent intent = new Intent(mainActivity, AlarmBroadcast.class);
@@ -71,16 +80,6 @@ public class AlarmFragment extends Fragment {
             mainActivity.startService(intentLocation);
 
             AlarmManager alarmManager = (AlarmManager) mainActivity.getSystemService(mainActivity.ALARM_SERVICE);
-
-            int days[] = {
-                    Calendar.MONDAY,
-                    Calendar.TUESDAY,
-                    Calendar.WEDNESDAY,
-                    Calendar.THURSDAY,
-                    Calendar.FRIDAY,
-                    Calendar.SATURDAY,
-                    Calendar.SUNDAY
-            };
 
             String[] daysString = getResources().getStringArray(R.array.days);
             int[] daysValue = getResources().getIntArray(R.array.days_values);
@@ -96,7 +95,7 @@ public class AlarmFragment extends Fragment {
             alarmCalendar.set(Calendar.HOUR_OF_DAY, hour);
             alarmCalendar.set(Calendar.MINUTE, minute);
 
-            Long alarmTime = alarmCalendar.getTimeInMillis();
+            long alarmTime = alarmCalendar.getTimeInMillis();
 
             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, alarmTime, 7 * AlarmManager.INTERVAL_DAY, pendingIntent);
 

@@ -94,6 +94,11 @@
     <string name="button_ok">Ok</string>
     <string name="alarm">Create alarm</string>
     <string name="your_stats">Your stats:</string>
+    <string name="number_of_steps">Number of steps</string>
+    <string name="average_time">Average time</string>
+    <string name="average_distance">Average distance</string>
+    <string name="challanges">Challanges:</string>
+    <string name="circle">•</string>
 
 
 </resources>

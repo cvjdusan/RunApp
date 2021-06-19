@@ -1,5 +1,6 @@
 package rs.ac.bg.etf.running.workouts;
 
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
 
@@ -48,8 +49,6 @@ public class WorkoutStats extends Fragment {
     private final int SILVER_COLOR = Color.GRAY;
     private final int GOLD_COLOR = Color.YELLOW;
 
-    //setBackgroundColor
-
     private NavController navController;
 
     public WorkoutStats() {
@@ -74,46 +73,43 @@ public class WorkoutStats extends Fragment {
 
         binding = FragmentWorkoutStatsBinding.inflate(inflater, container, false);
 
-        binding.toolbar.setNavigationOnClickListener(view -> {
-            navController.navigateUp();
-        });
-
         workoutViewModel.getWorkoutList().observe(mainActivity, workoutList -> {
             this.workoutList = workoutList;
+
+            int totalSteps = 0;
+            double totalDuration = 0;
+            double totalDistance = 0;
+            int numOfWorkout = workoutList.size();
+
+            for(int i = 0; i < workoutList.size(); i++){
+                totalSteps += workoutList.get(i).getSteps();
+                totalDuration += workoutList.get(i).getDuration();
+                totalDistance += workoutList.get(i).getDistance();
+            }
+
+            double avgDuration = totalDuration / numOfWorkout;
+            double avgDistance = totalDistance / numOfWorkout;
+
+            binding.averageDistance.setText((int)avgDistance + "km");
+            binding.averageTime.setText((int) avgDuration + "min");
+            binding.numberOfSteps.setText(totalSteps + "");
+
+            int stepsMedal = getMedal(totalSteps, BRONZE_STEPS, SILVER_STEPS, GOLD_STEPS);
+            int durationMedal = getMedal(totalDuration, BRONZE_DURATION, SILVER_DURATION, GOLD_DURATION);
+            int distanceMedal = getMedal(totalDistance, BRONZE_DISTANCE, SILVER_DISTANCE, GOLD_DISTANCE);
+
+            //   binding.numberOfStepsMedal.setText("MEDALJA");
+            binding.numberOfStepsMedal.setTextColor(stepsMedal);
+            //  binding.averageDistanceMedal.setText("MEDALJA");
+            binding.averageDistanceMedal.setTextColor(distanceMedal);
+            //binding.averageTimeMedal.setText("MEDALJA");
+            binding.averageTimeMedal.setTextColor(durationMedal);
+
+            setMedalText(stepsMedal, SILVER_STEPS, GOLD_STEPS, binding.label11, totalSteps, "steps", "steps");
+            setMedalText(distanceMedal, SILVER_DISTANCE, GOLD_DISTANCE, binding.label33, (int) totalDistance, "distance", "km");
+            setMedalText(durationMedal, SILVER_DURATION, GOLD_DURATION, binding.label22, (int) totalDuration, "duration", "min");
+
         });
-
-        int totalSteps = 0;
-        double totalDuration = 0;
-        double totalDistance = 0;
-        int numOfWorkout = workoutList.size() - 1;
-
-        for(int i = 0; i < workoutList.size(); i++){
-            totalSteps += workoutList.get(i).getSteps();
-            totalDuration += workoutList.get(i).getDuration();
-            totalDistance += workoutList.get(i).getDistance();
-        }
-
-        double avgDuration = totalDuration / numOfWorkout;
-        double avgDistance = totalDistance / numOfWorkout;
-
-        binding.averageDistance.setText((int)avgDistance + "km");
-        binding.averageTime.setText((int) avgDuration + "min");
-        binding.numberOfSteps.setText(totalSteps + "");
-
-        int stepsMedal = getMedal(totalSteps, BRONZE_STEPS, SILVER_STEPS, GOLD_STEPS);
-        int durationMedal = getMedal(totalDuration, BRONZE_DURATION, SILVER_DURATION, GOLD_DURATION);
-        int distanceMedal = getMedal(totalDistance, BRONZE_DISTANCE, SILVER_DISTANCE, GOLD_DISTANCE);
-
-     //   binding.numberOfStepsMedal.setText("MEDALJA");
-        binding.numberOfStepsMedal.setTextColor(stepsMedal);
-      //  binding.averageDistanceMedal.setText("MEDALJA");
-        binding.averageDistanceMedal.setTextColor(distanceMedal);
-        //binding.averageTimeMedal.setText("MEDALJA");
-        binding.averageTimeMedal.setTextColor(durationMedal);
-
-        setMedalText(stepsMedal, SILVER_STEPS, GOLD_STEPS, binding.label11, totalSteps, "steps", "steps");
-        setMedalText(distanceMedal, SILVER_DISTANCE, GOLD_DISTANCE, binding.label33, (int) totalDistance, "distance", "km");
-        setMedalText(durationMedal, SILVER_DURATION, GOLD_DURATION, binding.label22, (int) totalDuration, "duration", "min");
 
         return binding.getRoot();
     }

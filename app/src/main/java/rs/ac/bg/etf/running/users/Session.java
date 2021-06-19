@@ -46,6 +46,6 @@ public class Session {
     }
 
     public static CurrentWeatherModel getCurrentWeatherModel() {
-        return currentWeatherModel;
+        return Session.currentWeatherModel;
     }
 }
