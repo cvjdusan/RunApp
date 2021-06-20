@@ -16,8 +16,14 @@ public class WorkoutAdapter extends RecyclerView.Adapter<WorkoutAdapter.WorkoutV
 
     private List<Workout> workoutList = new ArrayList<>();
 
-    public WorkoutAdapter() {
+    public interface Callback<T> {
+        void invoke(T parameter);
+    }
+    private final WorkoutAdapter.Callback<Integer> callback;
 
+
+    public WorkoutAdapter(WorkoutAdapter.Callback<Integer> callback) {
+        this.callback = callback;
     }
 
     public void setWorkoutList(List<Workout> workoutList) {
@@ -51,12 +57,18 @@ public class WorkoutAdapter extends RecyclerView.Adapter<WorkoutAdapter.WorkoutV
 
         public ViewHolderWorkoutBinding binding;
 
+
         public WorkoutViewHolder(@NonNull ViewHolderWorkoutBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
         }
 
         public void bind(Workout workout) {
+            binding.workoutShow.setOnClickListener(view -> {
+                int workoutIndex = getAdapterPosition();
+                callback.invoke(workoutIndex);
+            });
+
             binding.workoutDate.setText(DateTimeUtil.getSimpleDateFormat().format(
                     workout.getDate()));
             binding.workoutLabel.setText(

@@ -330,6 +330,9 @@ public class WorkoutStartFragment extends Fragment {
                 steps,
                 Session.getCurrentUser().getUsername()
         ));
+
+        // add location
+
         stopWorkout();
     }
 

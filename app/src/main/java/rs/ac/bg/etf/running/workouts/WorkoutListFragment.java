@@ -72,7 +72,16 @@ public class WorkoutListFragment extends Fragment {
             return false;
         });
 
-        WorkoutAdapter workoutAdapter = new WorkoutAdapter();
+
+        WorkoutAdapter workoutAdapter = new WorkoutAdapter(
+                workoutIndex -> {
+                    WorkoutListFragmentDirections.ActionWorkoutListToWorkoutDetails action =
+                            WorkoutListFragmentDirections.actionWorkoutListToWorkoutDetails();
+                    action.setWorkoutIndex(workoutIndex);
+                    navController.navigate(action);
+                }
+        );
+
         workoutViewModel.getWorkoutList().observe(
                 getViewLifecycleOwner(),
                 workoutAdapter::setWorkoutList);

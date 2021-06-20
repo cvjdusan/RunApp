@@ -16,6 +16,9 @@
         <action
             android:id="@+id/start_workout"
             app:destination="@id/workout_start" />
+        <action
+            android:id="@+id/action_workout_list_to_workout_details"
+            app:destination="@id/workout_details" />
     </fragment>
 
     <fragment
@@ -29,4 +32,15 @@
         android:name="rs.ac.bg.etf.running.workouts.WorkoutStartFragment"
         android:label="fragment_workout_start"
         tools:layout="@layout/fragment_workout_start" />
+
+    <fragment
+        android:id="@+id/workout_details"
+        android:name="rs.ac.bg.etf.running.workouts.WorkoutDetailsFragment"
+        android:label="fragment_workout_details"
+        tools:layout="@layout/fragment_workout_details">
+        <argument
+            android:name="workout_index"
+            android:defaultValue="0"
+            app:argType="integer" />
+    </fragment>
 </navigation>

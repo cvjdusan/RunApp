@@ -7,6 +7,7 @@ import dagger.Provides;
 import dagger.hilt.InstallIn;
 import dagger.hilt.android.qualifiers.ApplicationContext;
 import dagger.hilt.components.SingletonComponent;
+import rs.ac.bg.etf.running.data.LocationDao;
 import rs.ac.bg.etf.running.data.Playlist;
 import rs.ac.bg.etf.running.data.PlaylistDao;
 import rs.ac.bg.etf.running.data.RunDatabase;
@@ -30,5 +31,10 @@ public interface DatabaseModule {
     @Provides
     static PlaylistDao providePlaylistDao(@ApplicationContext Context context) {
         return RunDatabase.getInstance(context).playlistDao();
+    }
+
+    @Provides
+    static LocationDao provideLocationDao(@ApplicationContext Context context) {
+        return RunDatabase.getInstance(context).locationDao();
     }
 }
