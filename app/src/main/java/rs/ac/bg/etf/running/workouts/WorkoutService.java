@@ -18,6 +18,7 @@ import androidx.lifecycle.LifecycleService;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.Timer;
 
 import javax.inject.Inject;
@@ -40,16 +41,16 @@ public class WorkoutService extends LifecycleService {
 
     private boolean serviceStarted = false;
 
-    static int indexSongs = 1;
+    static int currentIndexSongs = 1;
     public static WorkoutService staticService;
     private Timer timer;
 
-    public static int getIndexSongs() {
-        return indexSongs;
+    public static int getCurrentIndexSongs() {
+        return currentIndexSongs;
     }
 
-    public static void setIndexSongs(int indexSongs) {
-        WorkoutService.indexSongs = indexSongs;
+    public static void setCurrentIndexSongs(int currentIndexSongs) {
+        WorkoutService.currentIndexSongs = currentIndexSongs;
     }
 
     @Inject
@@ -96,63 +97,69 @@ public class WorkoutService extends LifecycleService {
                 if (!serviceStarted) {
                     serviceStarted = true;
                   //  motivator.start(this);
-                    player.start(this);
+                    if(Session.getCurrentPlaylist() != null)
+                        player.start(this);
+
                     measurer.start(this);
                     locator.getLocation(this);
                     stepCounter.start(this);
                 }
-                player.getMediaPlayer().setOnCompletionListener(mp -> {
-                    player.getMediaPlayer().reset();
-                    String songs = Session.getCurrentPlaylist().getMusicList();
-                    String[] songsSplit = songs.split("/");
-                    File filesDir = Session.getMainActivity().getFilesDir();
-                    int indexLambda = 0;
-                    String songForShow = "";
-                    if(indexSongs < songsSplit.length) {
-                        int num = Integer.parseInt(songsSplit[indexSongs]);
-                        for (String strFile : filesDir.list()) {
-                            if (num == indexLambda) {
-                                try {
-                                    songForShow = strFile;
-                                    player.getMediaPlayer().setDataSource(filesDir.getAbsolutePath() + File.separator + strFile);
-                                } catch (IOException e) {
-                                    e.printStackTrace();
+                if(LifecycleAwarePlayer.getMediaPlayer() != null) {
+                    LifecycleAwarePlayer.getMediaPlayer().setOnCompletionListener(mp -> {
+                        LifecycleAwarePlayer.getMediaPlayer().reset();
+                        String songs = Session.getCurrentPlaylist().getMusicListPositions();
+                        String[] songsSplit = songs.split("/");
+                        File filesDir = Session.getMainActivity().getFilesDir();
+                        int index2 = 0;
+                        String currentSong = "";
+                        if (currentIndexSongs < songsSplit.length) {
+                            int num = Integer.parseInt(songsSplit[currentIndexSongs]);
+                            for (String strFile : filesDir.list()) {
+                                if (num == index2) {
+                                    try {
+                                        currentSong = strFile;
+                                        LifecycleAwarePlayer
+                                                .getMediaPlayer()
+                                                .setDataSource(filesDir.getAbsolutePath() + File.separator + strFile);
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
                                 }
+                                Session.setCurrentSong(currentSong);
+                                index2++;
                             }
-                            indexLambda++;
+
+                            Intent local = new Intent();
+                            local.setAction("startMusic");
+                            String finalSong = currentSong;
+                            LifecycleAwarePlayer.getMediaPlayer().setOnPreparedListener(mp1 -> {
+                                int duration = LifecycleAwarePlayer.getMediaPlayer().getDuration();
+                                LifecycleAwarePlayer.getMediaPlayer().start();
+
+                                int seconds = ((duration / 1000) % 60);
+                                int minutes = ((duration / (1000 * 60)) % 60);
+
+                                StringBuilder songTime = new StringBuilder();
+                                songTime.append(String.format("%02d", minutes)).append(":");
+                                songTime.append(String.format("%02d", seconds));
+
+                                local.putExtra("songDuration", (Serializable) songTime);
+                                local.putExtra("songName", finalSong);
+                                Session.setCurrentSong(finalSong);
+                                context.sendBroadcast(local);
+                            });
+                            LifecycleAwarePlayer.getMediaPlayer().prepareAsync();
+                            Session.setCurrentSong(currentSong);
+                            currentIndexSongs++;
+                        } else {
+                            currentIndexSongs = 1;
+                            Session.setCurrentSong(currentSong);
+                            TextView tw = Session.getMainActivity().findViewById(R.id.current_song);
+                            tw.setText(getResources().getString(R.string.no_song));
+                            LifecycleAwarePlayer.getMediaPlayer().release();
                         }
-                        player.getMediaPlayer().setOnPreparedListener(mp1 -> {
-                            int duration = player.getMediaPlayer().getDuration();
-                            player.getMediaPlayer().start();
-
-                            int seconds = ((duration / 1000) % 60);
-                            int minutes = ((duration / (1000 * 60)) % 60);
-
-                            StringBuilder remaining = new StringBuilder();
-                            remaining.append(String.format("%02d", minutes)).append(":");
-                            remaining.append(String.format("%02d", seconds));
-
-                            TextView tw = Session.getMainActivity().findViewById(R.id.remaining);
-                            tw.setText(remaining);
-                        });
-                        player.getMediaPlayer().prepareAsync();
-
-                        TextView tw = Session.getMainActivity().findViewById(R.id.current_playlist);
-                        tw.setText(getResources().getString(R.string.no_playlist) + " " + Session.getCurrentPlaylist().getName());
-                        tw = Session.getMainActivity().findViewById(R.id.current_song);
-                        tw.setText(getResources().getString(R.string.no_song) + " " + songForShow);
-
-                        indexSongs++;
-                    }
-                    else
-                    {
-                        //MainActivity.setMusicPlaying(0);
-                        indexSongs = 1;
-                        TextView tw = (TextView) Session.getMainActivity().findViewById(R.id.current_song);
-                        tw.setText(getResources().getString(R.string.no_song));
-                        player.getMediaPlayer().release();
-                    }
-                });
+                    });
+                }
                 break;
             case INTENT_ACTION_POWER:
                 if (serviceStarted) {

@@ -77,7 +77,6 @@
     <string name="password_short">Length of password must be greater than 4.</string>
     <string name="password_dont_match">Passwords do not match.</string>
     <string name="user_doesnt_exist">Username/password is wrong.</string>
-    <string name="logout">Logout</string>
     <string name="playlist">Playlist</string>
     <string name="choose_name">Choose name</string>
     <string name="create">Create</string>
@@ -103,5 +102,7 @@
     <string name="challanges">Challanges:</string>
     <string name="circle">•</string>
     <string name="show">Show</string>
+    <string name="logout">Logout</string>
+#
 
 </resources>

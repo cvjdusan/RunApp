@@ -24,6 +24,7 @@ import java.io.File;
 import rs.ac.bg.etf.running.MainActivity;
 import rs.ac.bg.etf.running.data.Playlist;
 import rs.ac.bg.etf.running.databinding.FragmentPlaylistCreateBinding;
+import rs.ac.bg.etf.running.users.Session;
 
 
 public class PlaylistCreateFragment extends Fragment {
@@ -48,28 +49,28 @@ public class PlaylistCreateFragment extends Fragment {
 
         binding.toolbar.setNavigationOnClickListener(view -> navController.navigateUp());
 
-      //  TableLayout stk = (TableLayout) findViewById(R.id.table_main);
-        TableRow tbrow0 = new TableRow(mainActivity);
-        TextView tv0 = new TextView(mainActivity);
-        tv0.setText("#");
-        tv0.setTextColor(Color.WHITE);
-        tbrow0.addView(tv0);
-        TextView tv1 = new TextView(mainActivity);
-        tv1.setText(" Naziv ");
-        tv1.setTextColor(Color.WHITE);
-        tbrow0.addView(tv1);
-        TextView tv2 = new TextView(mainActivity);
-        tv2.setText(" - ");
-        tv2.setTextColor(Color.WHITE);
-        tbrow0.addView(tv2);
-        binding.tableMain.addView(tbrow0);
+        //  TableLayout stk = (TableLayout) findViewById(R.id.table_main);
+//        TableRow tbrow0 = new TableRow(mainActivity);
+//        TextView tv0 = new TextView(mainActivity);
+//        tv0.setText("#");
+//        tv0.setTextColor(Color.WHITE);
+//        tbrow0.addView(tv0);
+//        TextView tv1 = new TextView(mainActivity);
+//        tv1.setText(" Naziv ");
+//        tv1.setTextColor(Color.WHITE);
+//        tbrow0.addView(tv1);
+//        TextView tv2 = new TextView(mainActivity);
+//        tv2.setText(" - ");
+//        tv2.setTextColor(Color.WHITE);
+//        tbrow0.addView(tv2);
+//        binding.tableMain.addView(tbrow0);
 
         File filesDir = mainActivity.getFilesDir();
         int index = 0;
         for (String str : filesDir.list()) {
             TableRow tbrow = new TableRow(mainActivity);
             TextView t1v = new TextView(mainActivity);
-            t1v.setText("" + index);
+            t1v.setText("" + index + " ");
             t1v.setTextColor(Color.WHITE);
             t1v.setGravity(Gravity.CENTER);
             tbrow.addView(t1v);
@@ -87,34 +88,40 @@ public class PlaylistCreateFragment extends Fragment {
             index++;
         }
 
-
-
         binding.createPlaylistButton.setOnClickListener(view -> {
-
             String name = binding.playlistLabel.getEditText().getText().toString();
-            String songs;
-
+            String songsPositions, songNames;
             File files = mainActivity.getFilesDir();
+
             int i = 0;
-            StringBuilder sb = new StringBuilder();
+            StringBuilder musicListPositions = new StringBuilder();
+            StringBuilder musicListNames = new StringBuilder();
             for (String str : files.list()) {
                 CheckBox checkbox = binding.tableMain.findViewById(i);
-                if (checkbox.isChecked())
-                    sb.append(i).append('/');
+                if (checkbox.isChecked()) {
+                    musicListPositions.append(i);
+                    musicListPositions.append('/'); // delimeter
+
+                    musicListNames.append(str);
+                    musicListNames.append('/');
+                }
                 i++;
             }
-            sb.deleteCharAt(sb.length() - 1);
-            songs = sb.toString();
+            musicListPositions.deleteCharAt(musicListPositions.length() - 1);
+            musicListNames.deleteCharAt(musicListNames.length() - 1);
+            songsPositions = musicListPositions.toString();
+            songNames = musicListNames.toString();
 
-            if (!name.equals("") && !songs.equals("")) {
+            if (!name.equals("") && !songsPositions.equals("")) {
                 Playlist newPlaylist = new Playlist(
                         0,
-                        "dusan",
+                        Session.getCurrentUser().getUsername(),
                         name,
-                        songs
+                        songsPositions,
+                        songNames
                 );
                 playlistViewModel.insertPlaylist(newPlaylist);
-              //  playlistViewModel.setCurrentPlaylist(newPlaylist);
+               // Session.setCurrentPlaylist(newPlaylist); // da ne bude null
                 navController.navigateUp();
             } else {
                 Toast.makeText(mainActivity, "Fields cannot be empty!", Toast.LENGTH_SHORT).show();

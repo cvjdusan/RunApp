@@ -13,12 +13,12 @@ public interface WorkoutDao {
     @Insert
     long insert(Workout workout);
 
-    @Query("SELECT * FROM Workout")
-    List<Workout> getAll();
+    @Query("SELECT * FROM Workout WHERE username = :username")
+    LiveData<List<Workout>> getAllLiveData(String username);
 
-    @Query("SELECT * FROM Workout")
-    LiveData<List<Workout>> getAllLiveData();
+    @Query("SELECT * FROM Workout WHERE username = :username ORDER BY distance DESC ")
+    LiveData<List<Workout>> getAllSortedLiveData(String username);
 
-    @Query("SELECT * FROM Workout ORDER BY distance DESC")
-    LiveData<List<Workout>> getAllSortedLiveData();
+    @Query("SELECT * FROM Workout WHERE username = :username")
+    List<Workout> getAll(String username);
 }

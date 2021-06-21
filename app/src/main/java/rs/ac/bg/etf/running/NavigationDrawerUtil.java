@@ -1,7 +1,10 @@
 package rs.ac.bg.etf.running;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.widget.Toast;
 
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
@@ -12,7 +15,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
+import rs.ac.bg.etf.running.login.LoginFragment;
 import rs.ac.bg.etf.running.routes.RouteViewModel;
+import rs.ac.bg.etf.running.users.Session;
 
 public class NavigationDrawerUtil {
 
@@ -70,33 +75,45 @@ public class NavigationDrawerUtil {
                 navGraphIdToTagMap.get(navigationView.getCheckedItem().getItemId()));
 
         navHostFragmentChanger = id -> {
-                if (!fragmentManager.isStateSaved()) {
-                    String dstTag = navGraphIdToTagMap.get(id);
+                if(id == R.id.logout){
+                    Session.setCurrentUser(null);
+                    mainActivity.getDrawer().setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+                    SharedPreferences preferences = mainActivity.getSharedPreferences("checkbox", mainActivity.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = preferences.edit();
+                    editor.putString(LoginFragment.REMEMBER_USER_KEY, "false");
+                    editor.apply();
+                    Intent intent = new Intent(mainActivity, LoginActivity.class);
+                    mainActivity.startActivity(intent);
+                    mainActivity.finish();
+                } else {
+                    if (!fragmentManager.isStateSaved()) {
+                        String dstTag = navGraphIdToTagMap.get(id);
 
-                    navigationView.getMenu().findItem(id).setChecked(true);
+                        navigationView.getMenu().findItem(id).setChecked(true);
 
-                    NavHostFragment homeNavHostFragment = (NavHostFragment)
-                            fragmentManager.findFragmentByTag(homeTag);
-                    NavHostFragment dstNavHostFragment = (NavHostFragment)
-                            fragmentManager.findFragmentByTag(dstTag);
+                        NavHostFragment homeNavHostFragment = (NavHostFragment)
+                                fragmentManager.findFragmentByTag(homeTag);
+                        NavHostFragment dstNavHostFragment = (NavHostFragment)
+                                fragmentManager.findFragmentByTag(dstTag);
 
-                    if (!dstTag.equals(currentTagWrapper.get())) {
-                        fragmentManager.popBackStack(homeTag, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                        if (!dstTag.equals(currentTagWrapper.get())) {
+                            fragmentManager.popBackStack(homeTag, FragmentManager.POP_BACK_STACK_INCLUSIVE);
 
-                        if (!dstTag.equals(homeTag)) {
-                            fragmentManager.beginTransaction()
-                                    .detach(homeNavHostFragment)
-                                    .attach(dstNavHostFragment)
-                                    .setPrimaryNavigationFragment(dstNavHostFragment)
-                                    .addToBackStack(homeTag)
-                                    .setReorderingAllowed(true)
-                                    .commit();
+                            if (!dstTag.equals(homeTag)) {
+                                fragmentManager.beginTransaction()
+                                        .detach(homeNavHostFragment)
+                                        .attach(dstNavHostFragment)
+                                        .setPrimaryNavigationFragment(dstNavHostFragment)
+                                        .addToBackStack(homeTag)
+                                        .setReorderingAllowed(true)
+                                        .commit();
+                            }
+
+                            currentTagWrapper.set(dstTag);
+                            isOnHomeWrapper.set(dstTag.equals(homeTag));
                         }
-
-                        currentTagWrapper.set(dstTag);
-                        isOnHomeWrapper.set(dstTag.equals(homeTag));
+                        return dstNavHostFragment.getNavController();
                     }
-                    return dstNavHostFragment.getNavController();
                 }
                 return null;
         };

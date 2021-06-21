@@ -24,6 +24,7 @@ import dagger.hilt.android.AndroidEntryPoint;
 import rs.ac.bg.etf.running.data.User;
 import rs.ac.bg.etf.running.databinding.ActivityMainBinding;
 import rs.ac.bg.etf.running.login.LoginFragment;
+import rs.ac.bg.etf.running.playlist.PlaylistViewModel;
 import rs.ac.bg.etf.running.routes.RouteViewModel;
 import rs.ac.bg.etf.running.users.Session;
 import rs.ac.bg.etf.running.users.UserViewModel;
@@ -39,7 +40,6 @@ public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
     private DrawerLayout drawerLayout;
-    private RouteViewModel routeViewModel;
     private UserViewModel userViewModel;
 
     @Override
@@ -144,4 +144,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public DrawerLayout getDrawer() {
+        return drawerLayout;
+    }
 }

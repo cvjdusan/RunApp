@@ -14,13 +14,16 @@ public class Playlist {
     private String username;
 
     private String name;
-    private String musicList;
+    private String musicListPositions;
 
-    public Playlist(long id, String username, String name, String musicList) {
+    private String musicListNames;
+
+    public Playlist(long id, String username, String name, String musicListPositions, String musicListNames) {
         this.id = id;
         this.username = username;
         this.name = name;
-        this.musicList = musicList;
+        this.musicListPositions = musicListPositions;
+        this.musicListNames = musicListNames;
     }
 
     public long getId() {
@@ -47,11 +50,19 @@ public class Playlist {
         this.name = name;
     }
 
-    public String getMusicList() {
-        return musicList;
+    public String getMusicListPositions() {
+        return musicListPositions;
     }
 
-    public void setMusicList(String musicList) {
-        this.musicList = musicList;
+    public void setMusicList(String musicListPositions) {
+        this.musicListPositions = musicListPositions;
+    }
+
+    public String getMusicListNames() {
+        return musicListNames;
+    }
+
+    public void setMusicListNames(String musicListNames) {
+        this.musicListNames = musicListNames;
     }
 }

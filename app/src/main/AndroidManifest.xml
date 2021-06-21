@@ -28,8 +28,12 @@
         <activity android:name=".MainActivity">
         </activity>
 
-        <service android:name=".workouts.WorkoutService" />
+        <service android:name=".workouts.WorkoutService"
+            />
         <receiver android:name=".alarm.AlarmBroadcast" />
+
+
+
     </application>
 
 </manifest>

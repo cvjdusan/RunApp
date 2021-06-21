@@ -9,8 +9,10 @@ import androidx.lifecycle.ViewModel;
 
 import java.util.List;
 
+import rs.ac.bg.etf.running.MainActivity;
 import rs.ac.bg.etf.running.data.Workout;
 import rs.ac.bg.etf.running.data.WorkoutRepository;
+import rs.ac.bg.etf.running.users.Session;
 
 public class WorkoutViewModel extends ViewModel {
 
@@ -29,13 +31,14 @@ public class WorkoutViewModel extends ViewModel {
         this.workoutRepository = workoutRepository;
         this.savedStateHandle = savedStateHandle;
 
+
         workouts = Transformations.switchMap(
                 savedStateHandle.getLiveData(SORTED_KEY, false),
                 sorted -> {
                     if (!sorted) {
-                        return workoutRepository.getAllLiveData();
+                        return workoutRepository.getAllLiveData(Session.getCurrentUser().getUsername());
                     } else {
-                        return workoutRepository.getAllSortedLiveData();
+                        return workoutRepository.getAllSortedLiveData(Session.getCurrentUser().getUsername());
                     }
                 }
         );

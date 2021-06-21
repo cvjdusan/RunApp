@@ -49,13 +49,15 @@ public class WorkoutStartFragment extends Fragment {
 
     private static final String SHARED_PREFERENCES_NAME = "workout-shared-preferences";
     private static final String START_TIMESTAMP_KEY = "start-timestamp-key";
+    private static final String CURRENT_DURATION_KEY = "current-duration-key";
 
     private FragmentWorkoutStartBinding binding;
     private WorkoutViewModel workoutViewModel;
     private NavController navController;
     private MainActivity mainActivity;
 
-    private Timer timer;
+    private Timer timer, songTimer;
+    private boolean isSongPlaying = true;
     private SharedPreferences sharedPreferences;
     private BroadcastReceiver updateReceiver;
 
@@ -82,24 +84,37 @@ public class WorkoutStartFragment extends Fragment {
         mainActivity = (MainActivity) requireActivity();
         workoutViewModel = new ViewModelProvider(mainActivity).get(WorkoutViewModel.class);
 
-        sharedPreferences = mainActivity
-                .getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+        sharedPreferences = mainActivity.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 
         IntentFilter filter = new IntentFilter();
 
         filter.addAction("stepCounter");
+        filter.addAction("startMusic");
 
         updateReceiver = new BroadcastReceiver() {
 
             @Override
             public void onReceive(Context context, Intent intent) {
-                TextView textView = mainActivity.findViewById(R.id.steps);
-                String stepsString = textView.getText().toString();
-                int stepsNum = Integer.parseInt(stepsString.split(":")[1].substring(1));
-                stepsNum++;
-                textView.setText("Steps: " + stepsNum);
+                String action = intent.getAction();
+                if(action.equals("stepCounter")) {
+                    String stepsString = binding.steps.getText().toString();
+                    int stepsNum = Integer.parseInt(stepsString.split(":")[1].substring(1));
+                    stepsNum++;
+                    binding.steps.setText("Steps: " + stepsNum);
+                    Session.setCurrentSteps(stepsNum);
+                }
+                else if(action.equals("startMusic")){
+                    String songName = intent.getStringExtra("songName");
+                    String songDuration = intent.getStringExtra("songDuration");
+                    if(songName != null && songDuration != null) {
+                        binding.remaining.setText(songDuration);
+                        binding.currentPlaylist.setText(mainActivity.getResources().getString(R.string.no_playlist) + " " + Session.getCurrentPlaylist().getName());
+                        binding.currentSong.setText(mainActivity.getResources().getString(R.string.no_song) + " " + songName);
+                    }
+                }
             }
         };
+
         mainActivity.registerReceiver(updateReceiver, filter);
     }
 
@@ -113,8 +128,15 @@ public class WorkoutStartFragment extends Fragment {
         binding = FragmentWorkoutStartBinding.inflate(inflater, container, false);
 
         timer = new Timer();
+        songTimer = new Timer();
+
 
         if (sharedPreferences.contains(START_TIMESTAMP_KEY)) {
+            if(Session.getCurrentSong() != null) {
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putLong(CURRENT_DURATION_KEY, new Date().getTime());
+                editor.commit();
+            }
             startWorkout(sharedPreferences.getLong(START_TIMESTAMP_KEY, new Date().getTime()));
         }
 
@@ -139,111 +161,122 @@ public class WorkoutStartFragment extends Fragment {
 
         binding.pause.setOnClickListener(view -> {
             MediaPlayer m = LifecycleAwarePlayer.getMediaPlayer();
-            if(m.isPlaying())
-                m.pause();
-            else
-                m.start();
+            if(m != null) {
+                if (m.isPlaying()) {
+                    m.pause();
+                    isSongPlaying = false;
+                }
+                else {
+                    m.start();
+                    isSongPlaying = true;
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putLong(CURRENT_DURATION_KEY, new Date().getTime());
+                    editor.commit();
+                }
+            }
         });
 
         binding.next.setOnClickListener(view -> {
             MediaPlayer mediaPlayer = LifecycleAwarePlayer.getMediaPlayer();
+            if(mediaPlayer != null) {
+                String songs = Session.getCurrentPlaylist().getMusicListPositions();
+                String[] songsSplit = songs.split("/");
+                indexSongs = WorkoutService.getCurrentIndexSongs();
 
-            String songs = Session.getCurrentPlaylist().getMusicList();
-            String[] songsSplit = songs.split("/");
-            indexSongs = WorkoutService.getIndexSongs();
-            if (indexSongs >= songsSplit.length) {
-                Toast.makeText(mainActivity, "This is the last song!", Toast.LENGTH_SHORT).show();
-                return;
+                if (indexSongs >= songsSplit.length) {
+                    Toast.makeText(mainActivity, "There is no next song.", Toast.LENGTH_SHORT).show();
+                } else {
+                    WorkoutService.setCurrentIndexSongs(indexSongs + 1);
+                    mediaPlayer.stop();
+                    mediaPlayer.reset();
+
+                    String song = "";
+                    int num = Integer.parseInt(songsSplit[indexSongs]);
+                    int index = 0;
+                    for (String strFile : mainActivity.getFilesDir().list()) {
+                        if (num == index)
+                            song = strFile;
+                        index++;
+                    }
+                    String path = mainActivity.getFilesDir().getAbsolutePath() + File.separator + song;
+                    try {
+                        mediaPlayer.setDataSource(path);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    mediaPlayer.setOnPreparedListener(mp -> {
+                        int duration = mediaPlayer.getDuration();
+                        mediaPlayer.start();
+
+                        int seconds = (duration / 1000) % 60;
+                        int minutes = (duration / (1000 * 60)) % 60;
+
+                        StringBuilder remaining = new StringBuilder();
+                        remaining.append(String.format("%02d", minutes)).append(":");
+                        remaining.append(String.format("%02d", seconds));
+
+                        binding.remaining.setText(remaining);
+                    });
+                    mediaPlayer.prepareAsync();
+                    String label = mainActivity.getResources().getString(R.string.no_playlist);
+                    binding.currentPlaylist.setText(label + " " + Session.getCurrentPlaylist().getName());
+                    label = Session.getMainActivity().getResources().getString(R.string.no_song);
+                    binding.currentSong.setText(label + " " + song);
+                    Session.setCurrentSong(song);
+                }
             }
-            WorkoutService.setIndexSongs(indexSongs + 1);
-
-            mediaPlayer.stop();
-            mediaPlayer.reset();
-            String song = "";
-            int num = Integer.parseInt(songsSplit[indexSongs]);
-            int index = 0;
-            for (String strFile : mainActivity.getFilesDir().list()) {
-                if (num == index) song = strFile;
-                index++;
-            }
-            String path = mainActivity.getFilesDir().getAbsolutePath() + File.separator + song;
-            try {
-                mediaPlayer.setDataSource(path);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            mediaPlayer.setOnPreparedListener(mp -> {
-                int duration = mediaPlayer.getDuration();
-                mediaPlayer.start();
-
-                int seconds = (int) ((duration / 1000) % 60);
-                int minutes = (int) ((duration / (1000 * 60)) % 60);
-
-                StringBuilder remaining = new StringBuilder();
-                remaining.append(String.format("%02d", minutes)).append(":");
-                remaining.append(String.format("%02d", seconds));
-
-                TextView tw = (TextView) Session.getMainActivity().findViewById(R.id.remaining);
-                tw.setText(remaining);
-            });
-            mediaPlayer.prepareAsync();
-
-            TextView tw = (TextView) Session.getMainActivity().findViewById(R.id.current_playlist);
-            tw.setText(Session.getMainActivity().getResources().getString(R.string.no_playlist) + " " + Session.getCurrentPlaylist().getName());
-            tw = (TextView) Session.getMainActivity().findViewById(R.id.current_song);
-            tw.setText(Session.getMainActivity().getResources().getString(R.string.no_song) + " " + song);
         });
 
         binding.previous.setOnClickListener(view -> {
-          //  if (MainActivity.getMusicPlaying() == 0) return;
             MediaPlayer mediaPlayer = LifecycleAwarePlayer.getMediaPlayer();
+            if(mediaPlayer != null) {
+                String songs = Session.getCurrentPlaylist().getMusicListPositions();
+                String[] songsSplit = songs.split("/");
+                indexSongs = WorkoutService.getCurrentIndexSongs();
+                if (indexSongs <= 1) {
+                    Toast.makeText(mainActivity, "This is first song.", Toast.LENGTH_SHORT).show();
+                } else {
+                    WorkoutService.setCurrentIndexSongs(indexSongs - 1);
 
-            String songs = Session.getCurrentPlaylist().getMusicList();
-            String[] songsSplit = songs.split("/");
-            indexSongs = WorkoutService.getIndexSongs();
-            if (indexSongs <= 1) {
-                Toast.makeText(mainActivity, "This is the first song!", Toast.LENGTH_SHORT).show();
-                return;
+                    indexSongs -= 2;
+
+                    mediaPlayer.stop();
+                    mediaPlayer.reset();
+                    String song = "";
+                    int num = Integer.parseInt(songsSplit[indexSongs]);
+                    int index = 0;
+                    for (String strFile : mainActivity.getFilesDir().list()) {
+                        if (num == index)
+                            song = strFile;
+                        index++;
+                    }
+                    String path = mainActivity.getFilesDir().getAbsolutePath() + File.separator + song;
+                    try {
+                        mediaPlayer.setDataSource(path);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    mediaPlayer.setOnPreparedListener(mp -> {
+                        int duration = mediaPlayer.getDuration();
+                        mediaPlayer.start();
+
+                        int seconds = (duration / 1000) % 60;
+                        int minutes = (duration / (1000 * 60)) % 60;
+
+                        StringBuilder remaining = new StringBuilder();
+                        remaining.append(String.format("%02d", minutes)).append(":");
+                        remaining.append(String.format("%02d", seconds));
+
+                        binding.remaining.setText(remaining);
+                    });
+                    mediaPlayer.prepareAsync();
+                    String label = mainActivity.getResources().getString(R.string.no_playlist);
+                    binding.currentPlaylist.setText(label + " " + Session.getCurrentPlaylist().getName());
+                    label = Session.getMainActivity().getResources().getString(R.string.no_song);
+                    binding.currentSong.setText(label + " " + song);
+                    Session.setCurrentSong(song);
+                }
             }
-            WorkoutService.setIndexSongs(indexSongs - 1);
-
-            indexSongs -= 2;
-
-            mediaPlayer.stop();
-            mediaPlayer.reset();
-            String song = "";
-            int num = Integer.parseInt(songsSplit[indexSongs]);
-            int index = 0;
-            for (String strFile : mainActivity.getFilesDir().list()) {
-                if (num == index) song = strFile;
-                index++;
-            }
-            String path = mainActivity.getFilesDir().getAbsolutePath() + File.separator + song;
-            try {
-                mediaPlayer.setDataSource(path);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            mediaPlayer.setOnPreparedListener(mp -> {
-                int duration = mediaPlayer.getDuration();
-                mediaPlayer.start();
-
-                int seconds = (int) ((duration / 1000) % 60);
-                int minutes = (int) ((duration / (1000 * 60)) % 60);
-
-                StringBuilder remaining = new StringBuilder();
-                remaining.append(String.format("%02d", minutes)).append(":");
-                remaining.append(String.format("%02d", seconds));
-
-                TextView tw = (TextView) Session.getMainActivity().findViewById(R.id.remaining);
-                tw.setText(remaining);
-            });
-            mediaPlayer.prepareAsync();
-
-            TextView tw = (TextView) Session.getMainActivity().findViewById(R.id.current_playlist);
-            tw.setText(Session.getMainActivity().getResources().getString(R.string.no_playlist) + " " + Session.getCurrentPlaylist().getName());
-            tw = (TextView) Session.getMainActivity().findViewById(R.id.current_song);
-            tw.setText(Session.getMainActivity().getResources().getString(R.string.no_song) + " " + song);
         });
 
 
@@ -269,6 +302,7 @@ public class WorkoutStartFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         timer.cancel();
+        songTimer.cancel();
     }
 
     @Override
@@ -282,10 +316,19 @@ public class WorkoutStartFragment extends Fragment {
         binding.finish.setEnabled(true);
         binding.cancel.setEnabled(true);
 
-
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putLong(START_TIMESTAMP_KEY, startTimestamp);
         editor.commit();
+
+
+        if(Session.getCurrentSteps() != 0){
+            binding.steps.setText("Steps: " + Session.getCurrentSteps());
+        }
+
+        if(Session.getCurrentSong() != null) {
+            binding.currentPlaylist.setText(mainActivity.getResources().getString(R.string.no_playlist) + " " + Session.getCurrentPlaylist().getName());
+            binding.currentSong.setText(mainActivity.getResources().getString((R.string.no_song)) + " " + Session.getCurrentSong());
+        }
 
         Handler handler = new Handler(Looper.getMainLooper());
 
@@ -308,6 +351,49 @@ public class WorkoutStartFragment extends Fragment {
                 handler.post(() -> binding.workoutDuration.setText(workoutDuration));
             }
         }, 0, 10);
+
+        long startTimestampSong = 0;
+        startTimestampSong = sharedPreferences.getLong(CURRENT_DURATION_KEY, new Date().getTime());
+
+        if(Session.getCurrentSong() != null) {
+            long finalStartTimestampSong = startTimestampSong;
+            songTimer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    if (isSongPlaying) {
+//                        String remainingString = binding.remaining.getText().toString();
+//
+//                        String[] units = remainingString.split(":");
+//
+//                        int remainingMinutes = Integer.parseInt(units[0]);
+//                        int remainingSeconds = Integer.parseInt(units[1]);
+//
+//                        if (!(remainingMinutes == 0 && remainingSeconds == 0) && isSongPlaying) {
+//                            if (remainingSeconds == 0) {
+//                                remainingMinutes--;
+//                                remainingSeconds = 60;
+//                            }
+//                            remainingSeconds--;
+//                        }
+//
+//                        StringBuilder remaining = new StringBuilder();
+//                        remaining.append(String.format("%02d", remainingMinutes)).append(":");
+//                        remaining.append(String.format("%02d", remainingSeconds));
+//
+//                        handler.post(() -> binding.remaining.setText(remaining));
+
+//                        long elapsed = new Date().getTime() - sharedPreferences.getLong(CURRENT_DURATION_KEY, new Date().getTime());
+//                        int seconds = (int) ((elapsed / 1000) % 60);
+//                        int minutes = (int) ((elapsed / (1000 * 60)) % 60);
+//                        StringBuilder remaining = new StringBuilder();
+//                        remaining.append(String.format("%02d", minutes)).append(":");
+//                        remaining.append(String.format("%02d", seconds));
+//
+//                        handler.post(() -> binding.remaining.setText(remaining));
+                    }
+                }
+            }, 0, 1000);
+        }
 
         Intent intent = new Intent();
         intent.setClass(mainActivity, WorkoutService.class);
@@ -347,4 +433,5 @@ public class WorkoutStartFragment extends Fragment {
         sharedPreferences.edit().remove(START_TIMESTAMP_KEY).commit();
         navController.navigateUp();
     }
+
 }

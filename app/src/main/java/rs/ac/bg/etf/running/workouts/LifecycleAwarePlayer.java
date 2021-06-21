@@ -1,6 +1,7 @@
 package rs.ac.bg.etf.running.workouts;
 
 import android.content.Context;
+import android.content.Intent;
 import android.media.MediaPlayer;
 import android.widget.TextView;
 
@@ -10,6 +11,7 @@ import androidx.lifecycle.LifecycleOwner;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 
 import javax.inject.Inject;
 
@@ -30,7 +32,7 @@ public class LifecycleAwarePlayer implements DefaultLifecycleObserver {
     public void start(Context context) {
         if (mediaPlayer == null) {
             try {
-                String musicList = Session.getCurrentPlaylist().getMusicList();
+                String musicList = Session.getCurrentPlaylist().getMusicListPositions();
                 String song = null;
                 int n = musicList.charAt(0) - '0';
                 int songNum = 0;
@@ -43,6 +45,11 @@ public class LifecycleAwarePlayer implements DefaultLifecycleObserver {
                 mediaPlayer = new MediaPlayer();
                 mp = mediaPlayer; // static
                 mediaPlayer.setDataSource(path);
+
+                Intent local = new Intent();
+                local.setAction("startMusic");
+
+                String finalSong = song;
                 mediaPlayer.setOnPreparedListener(m -> {
                     int dur = mediaPlayer.getDuration();
                     mediaPlayer.start();
@@ -54,14 +61,12 @@ public class LifecycleAwarePlayer implements DefaultLifecycleObserver {
                     songTime.append(String.format("%02d", minutes)).append(":");
                     songTime.append(String.format("%02d", seconds));
 
-                    TextView tw = Session.getMainActivity().findViewById(R.id.remaining);
-                    tw.setText(songTime);
+                    local.putExtra("songDuration", (Serializable) songTime);
+                    local.putExtra("songName", finalSong);
+                    Session.setCurrentSong(finalSong);
+                    context.sendBroadcast(local);
                 });
                 mediaPlayer.prepareAsync();
-                TextView tw = Session.getMainActivity().findViewById(R.id.current_playlist);
-                tw.setText(Session.getMainActivity().getResources().getString(R.string.no_playlist) + " " + Session.getCurrentPlaylist().getName());
-                tw = Session.getMainActivity().findViewById(R.id.current_song);
-                tw.setText(Session.getMainActivity().getResources().getString(R.string.no_song) + " " + song);
             } catch (IOException e) {
                 e.printStackTrace();
             }

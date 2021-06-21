@@ -40,12 +40,9 @@ public class FilterDialogFragment extends DialogFragment {
 
         binding.ok.setOnClickListener(view -> {
             sort = binding.checkboxSort.isChecked();
-
-
             Bundle bundle = new Bundle();
             bundle.putSerializable(SET_FILTER_SORT_KEY, (sort ? "1" : "0"));
             getParentFragmentManager().setFragmentResult(WorkoutListFragment.DIALOG_KEY, bundle);
-
             this.dismiss();
         });
 

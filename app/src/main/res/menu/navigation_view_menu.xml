@@ -28,7 +28,13 @@
         <item android:id="@id/nav_graph_stats"
             android:icon="@drawable/baseline_directions_run_black_48"
             android:title="@string/your_stats" />
-
     </group>
+
+    <item android:title="@string/logout">
+        <menu>
+            <item android:id="@+id/logout"
+                android:title="@string/logout" />
+        </menu>
+    </item>
 
 </menu>
