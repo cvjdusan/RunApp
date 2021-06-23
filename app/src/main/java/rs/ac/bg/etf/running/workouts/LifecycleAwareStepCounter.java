@@ -24,16 +24,9 @@ public class LifecycleAwareStepCounter implements DefaultLifecycleObserver {
     private SensorManager sensorManager = null;
     private Context context;
 
-    private MainActivity mainActivity = (MainActivity) Session.getMainActivity();
-
     private final SensorEventListener listener = new SensorEventListener() {
         @Override
         public void onSensorChanged(SensorEvent event) {
-       //     TextView textView = mainActivity.findViewById(R.id.steps);
-        //    String stepsString = textView.getText().toString();
-         //   int stepsNum = Integer.parseInt(stepsString.split(":")[1].substring(1));
-     //       stepsNum++;
-          //  textView.setText("Steps: " + stepsNum);
             Intent local = new Intent();
             local.setAction("stepCounter");
             context.sendBroadcast(local);

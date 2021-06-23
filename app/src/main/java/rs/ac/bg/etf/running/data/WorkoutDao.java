@@ -21,4 +21,16 @@ public interface WorkoutDao {
 
     @Query("SELECT * FROM Workout WHERE username = :username")
     List<Workout> getAll(String username);
+
+    @Query("SELECT * FROM Workout WHERE duration >= :from AND duration <= :to AND username = :username")
+    LiveData<List<Workout>> getAllLiveDataFilterDuration(double from, double to, String username);
+
+    @Query("SELECT * FROM Workout WHERE distance >= :from AND distance <= :to AND username = :username")
+    LiveData<List<Workout>> getAllLiveDataFilterDistance(double from, double to, String username);
+
+    @Query("SELECT * FROM Workout WHERE duration >= :from AND duration <= :to AND username = :username ORDER BY duration DESC")
+    LiveData<List<Workout>> getAllLiveDataFilterDurationSorted(double from, double to, String username);
+
+    @Query("SELECT * FROM Workout WHERE distance >= :from AND distance <= :to AND username = :username ORDER BY distance DESC")
+    LiveData<List<Workout>> getAllLiveDataFilterDistanceSorted(double from, double to, String username);
 }

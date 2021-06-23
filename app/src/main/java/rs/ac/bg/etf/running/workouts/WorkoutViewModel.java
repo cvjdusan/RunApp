@@ -9,7 +9,6 @@ import androidx.lifecycle.ViewModel;
 
 import java.util.List;
 
-import rs.ac.bg.etf.running.MainActivity;
 import rs.ac.bg.etf.running.data.Workout;
 import rs.ac.bg.etf.running.data.WorkoutRepository;
 import rs.ac.bg.etf.running.users.Session;
@@ -23,6 +22,9 @@ public class WorkoutViewModel extends ViewModel {
     private boolean sorted = false;
 
     private final LiveData<List<Workout>> workouts;
+    private double from = WorkoutFilterDialogFragment.DEFAULT_FROM;
+    private double to = WorkoutFilterDialogFragment.DEFAULT_TO;
+    private int filter = WorkoutFilterDialogFragment.DEFAULT_FILTER;
 
     @ViewModelInject
     public WorkoutViewModel(
@@ -36,9 +38,13 @@ public class WorkoutViewModel extends ViewModel {
                 savedStateHandle.getLiveData(SORTED_KEY, false),
                 sorted -> {
                     if (!sorted) {
-                        return workoutRepository.getAllLiveData(Session.getCurrentUser().getUsername());
+                        return workoutRepository.getAllLiveData(
+                                filter, from, to,
+                                Session.getCurrentUser().getUsername());
                     } else {
-                        return workoutRepository.getAllSortedLiveData(Session.getCurrentUser().getUsername());
+                        return workoutRepository.getAllSortedLiveData(
+                                filter, from, to,
+                                Session.getCurrentUser().getUsername());
                     }
                 }
         );
@@ -52,7 +58,7 @@ public class WorkoutViewModel extends ViewModel {
         savedStateHandle.set(SORTED_KEY, sorted = true);
     }
 
-    public void unsort() { savedStateHandle.set(SORTED_KEY, sorted = false); }
+    public void showUnsorted() { savedStateHandle.set(SORTED_KEY, sorted = false); }
 
     public void insertWorkout(Workout workout) {
         workoutRepository.insert(workout);
@@ -60,5 +66,17 @@ public class WorkoutViewModel extends ViewModel {
 
     public LiveData<List<Workout>> getWorkoutList() {
         return workouts;
+    }
+
+    public void setFrom(double from) {
+        this.from = from;
+    }
+
+    public void setTo(double to) {
+        this.to = to;
+    }
+
+    public void setFilter(int filterArg) {
+        this.filter = filterArg;
     }
 }

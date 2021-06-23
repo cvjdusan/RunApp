@@ -52,20 +52,30 @@ public class WorkoutListFragment extends Fragment {
         binding.toolbar.setOnMenuItemClickListener(menuItem -> {
             switch (menuItem.getItemId()) {
                 case R.id.workout_menu_item_sort:
-                    new FilterDialogFragment().show(getChildFragmentManager(), null);
+                    new WorkoutFilterDialogFragment().show(getChildFragmentManager(), null);
 
                     getChildFragmentManager().setFragmentResultListener(DIALOG_KEY, this,
                             (requestKey, result) -> {
-                                String res = (String) result.getSerializable(FilterDialogFragment.SET_FILTER_SORT_KEY);
+                                String resSort = (String) result.getSerializable(WorkoutFilterDialogFragment.SORT_KEY);
+                                String resFilter = (String) result.getSerializable(WorkoutFilterDialogFragment.FILTER_KEY);
 
-                                boolean sort = false;
-                                if (res.equals("1")) sort = true;
+                                String[] helper = resFilter.split("/");
 
-                                if (sort)
+                                double from = Double.parseDouble(helper[0]);
+                                double to = Double.parseDouble(helper[1]);
+                                int filterArg = Integer.parseInt(helper[2]);;
+
+//                                Toast.makeText(getContext(), from + " " + to + " " + filterArg + " ",
+//                                        Toast.LENGTH_SHORT).show();
+
+                                workoutViewModel.setFrom(from);
+                                workoutViewModel.setTo(to);
+                                workoutViewModel.setFilter(filterArg);
+
+                                if (resSort.equals("1"))
                                     workoutViewModel.sort();
                                 else
-                                    workoutViewModel.unsort();
-
+                                    workoutViewModel.showUnsorted();
                             });
                     return false;
             }

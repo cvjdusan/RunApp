@@ -103,6 +103,11 @@
     <string name="circle">•</string>
     <string name="show">Show</string>
     <string name="logout">Logout</string>
-#
+    <string name="filter_by">Filter by:</string>
+    <string name="duration">Duration</string>
+    <string name="distance">Distance</string>
+    <string name="from">From</string>
+    <string name="to">To</string>
+    #
 
 </resources>

@@ -29,11 +29,38 @@ public class WorkoutRepository {
         return workoutDao.getAll(username);
     }
 
-    public LiveData<List<Workout>> getAllLiveData(String username) {
+    public LiveData<List<Workout>> getAllLiveData(int filter, double from, double to,
+                                                  String username) {
+        if(filter != -1) {
+
+            if(filter == 0){
+                return workoutDao.getAllLiveDataFilterDuration(from, to, username);
+            }
+
+            else if(filter == 1){
+                return workoutDao.getAllLiveDataFilterDistance(from, to, username);
+            }
+
+        }
+
         return workoutDao.getAllLiveData(username);
     }
 
-    public LiveData<List<Workout>> getAllSortedLiveData(String username) {
+    public LiveData<List<Workout>> getAllSortedLiveData(int filter, double from, double to,
+                                                        String username) {
+
+        if(filter != -1) {
+
+            if(filter == 0){
+                return workoutDao.getAllLiveDataFilterDurationSorted(from, to, username);
+            }
+
+            else if(filter == 1){
+                return workoutDao.getAllLiveDataFilterDistanceSorted(from, to, username);
+            }
+
+        }
+
         return workoutDao.getAllSortedLiveData(username);
     }
 
