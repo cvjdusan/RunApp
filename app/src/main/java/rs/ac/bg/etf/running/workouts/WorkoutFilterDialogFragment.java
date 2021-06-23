@@ -65,10 +65,6 @@ public class WorkoutFilterDialogFragment extends DialogFragment {
 
             resultFilter += "/" + idx; // -1 if there is none
 
-
-            Toast.makeText(getContext(), resultFilter + " ",
-                    Toast.LENGTH_LONG).show();
-
             String resultSort = sort ? "1" : "0";
 
             Bundle bundle = new Bundle();

@@ -1,5 +1,6 @@
 package rs.ac.bg.etf.running;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.widget.Toast;
@@ -18,14 +19,14 @@ import java.util.concurrent.atomic.AtomicReference;
 import rs.ac.bg.etf.running.login.LoginFragment;
 import rs.ac.bg.etf.running.routes.RouteViewModel;
 import rs.ac.bg.etf.running.users.Session;
+import rs.ac.bg.etf.running.workouts.WorkoutService;
+import rs.ac.bg.etf.running.workouts.WorkoutStartFragment;
 
 public class NavigationDrawerUtil {
 
     private interface NavHostFragmentChanger {
         NavController change(int id);
     }
-
-    private MainActivity mainActivity;
 
     private static NavigationDrawerUtil.NavHostFragmentChanger navHostFragmentChanger;
 
@@ -82,10 +83,18 @@ public class NavigationDrawerUtil {
                     SharedPreferences.Editor editor = preferences.edit();
                     editor.putString(LoginFragment.REMEMBER_USER_KEY, "false");
                     editor.apply();
-                    Intent intent = new Intent(mainActivity, LoginActivity.class);
+
+                    Intent intent = new Intent();
+                    intent.setClass(mainActivity, WorkoutService.class);
+                    mainActivity.stopService(intent);
+                    SharedPreferences sharedPreferences = mainActivity.getSharedPreferences(WorkoutStartFragment.SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+                    sharedPreferences.edit().remove(WorkoutStartFragment.START_TIMESTAMP_KEY).commit();
+                    sharedPreferences.edit().remove(WorkoutStartFragment.CURRENT_DURATION_KEY).commit();
+                    intent = new Intent(mainActivity, LoginActivity.class);
                     mainActivity.startActivity(intent);
                     mainActivity.finish();
-                } else {
+                }
+                else {
                     if (!fragmentManager.isStateSaved()) {
                         String dstTag = navGraphIdToTagMap.get(id);
 

@@ -34,12 +34,15 @@ public class LifecycleAwarePlayer implements DefaultLifecycleObserver {
             try {
                 String musicList = Session.getCurrentPlaylist().getMusicListPositions();
                 String song = null;
-                int n = musicList.charAt(0) - '0';
-                int songNum = 0;
+                int musicPosition = musicList.charAt(0) - '0';
+                int currentPosition = 0;
                 for(String file: context.getFilesDir().list()){
-                    if(n == songNum)
+
+                    if(musicPosition == currentPosition) {
                         song = file;
-                    songNum++;
+                        break;
+                    }else
+                        currentPosition++;
                 }
                 String path = context.getFilesDir().getAbsolutePath() + File.separator + song;
                 mediaPlayer = new MediaPlayer();
@@ -64,6 +67,7 @@ public class LifecycleAwarePlayer implements DefaultLifecycleObserver {
                     local.putExtra("songDuration", (Serializable) songTime);
                     local.putExtra("songName", finalSong);
                     Session.setCurrentSong(finalSong);
+
                     context.sendBroadcast(local);
                 });
                 mediaPlayer.prepareAsync();

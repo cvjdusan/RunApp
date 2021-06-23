@@ -1,6 +1,7 @@
 package rs.ac.bg.etf.running;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
@@ -10,9 +11,13 @@ import androidx.navigation.NavController;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.AttributeSet;
+import android.view.View;
 import android.widget.Toast;
 
 import java.util.concurrent.Callable;
@@ -29,6 +34,8 @@ import rs.ac.bg.etf.running.routes.RouteViewModel;
 import rs.ac.bg.etf.running.users.Session;
 import rs.ac.bg.etf.running.users.UserViewModel;
 import rs.ac.bg.etf.running.workouts.WorkoutListFragmentDirections;
+import rs.ac.bg.etf.running.workouts.WorkoutService;
+import rs.ac.bg.etf.running.workouts.WorkoutStartFragment;
 //import rs.ac.bg.etf.running.workouts.WorkoutListFragmentDirections;
 
 @AndroidEntryPoint
@@ -56,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
      //   drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
 
         Session.setMainActivity(this);
+
         createNotificationChannel();
         if(Session.getCurrentUser() == null){
             SharedPreferences mPrefs = getSharedPreferences("username", MODE_PRIVATE);
@@ -70,12 +78,9 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-      //  Toast.makeText(this, Session.getCurrentUser().getUsername() + "", Toast.LENGTH_SHORT).show();
-
         if (savedInstanceState == null) {
             setupNavigation(true);
         } else {
-            // TODO: CHANGE
 //            if (getIntent().getAction().equals(INTENT_ACTION_WORKOUT)) {
 //                NavController navController = NavigationDrawerUtil
 //                        .changeNavHostFragment(R.id.nav_graph_workouts);
@@ -142,6 +147,11 @@ public class MainActivity extends AppCompatActivity {
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 
     public DrawerLayout getDrawer() {

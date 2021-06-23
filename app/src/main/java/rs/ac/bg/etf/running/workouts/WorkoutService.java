@@ -73,9 +73,8 @@ public class WorkoutService extends LifecycleService {
         Log.d(MainActivity.LOG_TAG, "WorkoutService.onCreate()");
         super.onCreate();
 
-        timer = new Timer();
-
-     //   getLifecycle().addObserver(motivator);
+        //timer = new Timer();
+        //getLifecycle().addObserver(motivator);
         getLifecycle().addObserver(player);
         getLifecycle().addObserver(measurer);
         getLifecycle().addObserver(locator);
@@ -108,27 +107,30 @@ public class WorkoutService extends LifecycleService {
                     LifecycleAwarePlayer.getMediaPlayer().setOnCompletionListener(mp -> {
                         LifecycleAwarePlayer.getMediaPlayer().reset();
                         String songs = Session.getCurrentPlaylist().getMusicListPositions();
-                        String[] songsSplit = songs.split("/");
+                        String[] helper = songs.split("/");
                         File filesDir = Session.getMainActivity().getFilesDir();
-                        int index2 = 0;
-                        String currentSong = "";
-                        if (currentIndexSongs < songsSplit.length) {
-                            int num = Integer.parseInt(songsSplit[currentIndexSongs]);
-                            for (String strFile : filesDir.list()) {
-                                if (num == index2) {
-                                    try {
-                                        currentSong = strFile;
-                                        LifecycleAwarePlayer
-                                                .getMediaPlayer()
-                                                .setDataSource(filesDir.getAbsolutePath() + File.separator + strFile);
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                                Session.setCurrentSong(currentSong);
-                                index2++;
-                            }
 
+                        int currentPosition = 0;
+                        String currentSong = "";
+                        if (currentIndexSongs < helper.length) {
+                            int musicPosition = Integer.parseInt(helper[currentIndexSongs]);
+                            String[] names = Session.getCurrentPlaylist().getMusicListNames().split("/");
+                            currentSong = names[currentIndexSongs];
+//                            for (String strFile : filesDir.list()) {
+//                                if (musicPosition == currentPosition) {
+//                                    try {
+//                                        currentSong = strFile;
+//                                        LifecycleAwarePlayer
+//                                                .getMediaPlayer()
+//                                                .setDataSource(filesDir.getAbsolutePath() + File.separator + strFile);
+//                                    } catch (IOException e) {
+//                                        e.printStackTrace();
+//                                    }
+//                                    break;
+//                                } else
+//                                    currentPosition++;
+//                            }
+                            Session.setCurrentSong(currentSong);
                             Intent local = new Intent();
                             local.setAction("startMusic");
                             String finalSong = currentSong;

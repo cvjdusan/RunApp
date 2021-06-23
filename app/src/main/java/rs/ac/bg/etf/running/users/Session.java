@@ -17,7 +17,7 @@ public class Session {
     private static Activity mainActivity; // never used
     private static String currentSong;
     private static CurrentWeatherModel currentWeatherModel;
-    private static int currentSteps;
+    private static int currentSteps = 0;
 
     public static void setMainActivity(Activity mainActivity) {
         Session.mainActivity = mainActivity;
