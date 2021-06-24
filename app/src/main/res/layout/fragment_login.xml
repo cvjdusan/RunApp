@@ -24,6 +24,7 @@
     <EditText
         android:id="@+id/password"
         android:hint="@string/password"
+        android:inputType="textPassword"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/username"

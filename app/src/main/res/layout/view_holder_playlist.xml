@@ -17,6 +17,7 @@
             android:layout_height="wrap_content">
             <TextView
                 android:id="@+id/playlist_label"
+                android:layout_marginLeft="30dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:layout_constraintLeft_toLeftOf="parent"
@@ -28,6 +29,7 @@
                 android:id="@+id/button_select"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="60dp"
                 android:hint="@string/select_playlist"
                 android:text="@string/select_playlist"
                 android:textColor="@color/white"

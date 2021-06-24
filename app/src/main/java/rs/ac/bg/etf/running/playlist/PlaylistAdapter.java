@@ -2,6 +2,7 @@ package rs.ac.bg.etf.running.playlist;
 
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -19,11 +20,12 @@ import rs.ac.bg.etf.running.workouts.DateTimeUtil;
 import rs.ac.bg.etf.running.workouts.WorkoutAdapter;
 
 public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.PlaylistViewHolder> {
+    private final MainActivity mainActivity;
     private List<Playlist> playlistList = new ArrayList<>();
     private PlaylistViewModel playlistViewModel;
 
-    public PlaylistAdapter(){
-
+    public PlaylistAdapter(MainActivity mainActivity){
+        this.mainActivity = mainActivity;
     }
 
     public void setPlaylistList(List<Playlist> playlistList) {
@@ -65,7 +67,9 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.Playli
             binding.playlistLabel.setText(p.getName());
             binding.buttonSelect.setOnClickListener(l -> {
                 Session.setCurrentPlaylist(p);
+                Toast.makeText(mainActivity, "Current playlist: " + Session.getCurrentPlaylist().getName(), Toast.LENGTH_SHORT).show();
             });
+
         }
     }
 }

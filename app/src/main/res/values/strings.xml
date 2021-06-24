@@ -82,20 +82,18 @@
     <string name="create">Create</string>
     <string name="list_of_available_music">List of available music:</string>
     <string name="create_playlist">Create playlist</string>
-    <string name="select_playlist">Select playlist</string>
+    <string name="select_playlist">Pick</string>
     <string name="no_song">Song: </string>
     <string name="no_playlist">Playlist: </string>
     <string name="pause_button_text">|></string>
     <string name="resume_button_text">Resume</string>
     <string name="next_button_text">-></string>
-    <string name="previous_button_text">
-        &lt;-
-    </string>
+    <string name="previous_button_text">"         &lt;"</string>
     <string name="steps_text">Steps: 0</string>
     <string name="sort_option">Sort?</string>
     <string name="button_ok">OK</string>
     <string name="alarm">Create alarm</string>
-    <string name="your_stats">Your stats:</string>
+    <string name="your_stats">Your stats</string>
     <string name="number_of_steps">Number of steps</string>
     <string name="average_time">Average time</string>
     <string name="average_distance">Average distance</string>

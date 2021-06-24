@@ -2,7 +2,9 @@ package rs.ac.bg.etf.running.alarm;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -52,11 +54,11 @@ public class AlarmFragment extends Fragment {
             ViewGroup container,
             Bundle savedInstanceState) {
         binding = FragmentAlarmBinding.inflate(inflater, container, false);
-        String[] weekdays = getResources().getStringArray(R.array.days);
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(
-                mainActivity,
+        String[] daysOfWeek = getResources().getStringArray(R.array.days);
+
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(mainActivity,
                 android.R.layout.simple_list_item_1,
-                weekdays);
+                daysOfWeek);
 
         binding.spinner.setAdapter(arrayAdapter);
 
@@ -72,6 +74,7 @@ public class AlarmFragment extends Fragment {
 
         binding.confirm.setOnClickListener(view -> {
             Intent intent = new Intent(mainActivity, AlarmBroadcast.class);
+
             PendingIntent pendingIntent = PendingIntent.getBroadcast(mainActivity, 0, intent, 0);
 
             Intent intentLocation = new Intent();
@@ -79,7 +82,7 @@ public class AlarmFragment extends Fragment {
             intentLocation.setAction(WorkoutService.INTENT_ACTION_LOCATION);
             mainActivity.startService(intentLocation);
 
-            AlarmManager alarmManager = (AlarmManager) mainActivity.getSystemService(mainActivity.ALARM_SERVICE);
+            AlarmManager alarmManager = (AlarmManager) mainActivity.getSystemService(Context.ALARM_SERVICE);
 
             String[] daysString = getResources().getStringArray(R.array.days);
             int[] daysValue = getResources().getIntArray(R.array.days_values);
@@ -99,10 +102,8 @@ public class AlarmFragment extends Fragment {
 
             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, alarmTime, 7 * AlarmManager.INTERVAL_DAY, pendingIntent);
 
-            Toast.makeText(mainActivity,
-                    "You set an alarm for " + hour + ":" + minute + " on every " + daysString[binding.spinner.getSelectedItemPosition()],
-                    Toast.LENGTH_SHORT).show();
-
+            String stringDay = daysString[binding.spinner.getSelectedItemPosition()];
+            Toast.makeText(mainActivity, "Alarm is set at " + hour + ":" + minute + " on every " + stringDay, Toast.LENGTH_SHORT).show();
         });
 
         return binding.getRoot();

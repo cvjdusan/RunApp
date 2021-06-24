@@ -24,7 +24,7 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toolbar"
         android:textSize="32sp"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="20dp"
 
         />
 
@@ -35,7 +35,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@id/average_time"
         app:layout_constraintTop_toBottomOf="@id/header"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="30dp"
         android:textStyle="bold"
         />
 
@@ -46,7 +46,7 @@
         app:layout_constraintLeft_toRightOf="@id/number_of_steps"
         app:layout_constraintTop_toBottomOf="@id/header"
         app:layout_constraintRight_toLeftOf="@id/average_distance"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="30dp"
         android:textStyle="bold"
         />
 
@@ -57,7 +57,7 @@
         app:layout_constraintLeft_toRightOf="@id/average_time"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/header"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="30dp"
         android:textStyle="bold"
         />
 
@@ -100,7 +100,7 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/label_1"
         android:textSize="32sp"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="35dp"
         />
 
     <TextView
@@ -118,8 +118,8 @@
         android:id="@+id/average_time_medal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintLeft_toRightOf="@id/label_22"
-        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="@id/number_of_steps_medal"
+        app:layout_constraintRight_toRightOf="@id/number_of_steps_medal"
         app:layout_constraintTop_toBottomOf="@id/number_of_steps_medal"
         android:textSize="120sp"
         android:text="@string/circle"
@@ -129,8 +129,8 @@
         android:id="@+id/average_distance_medal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintLeft_toRightOf="@id/label_33"
-        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="@id/number_of_steps_medal"
+        app:layout_constraintRight_toRightOf="@id/number_of_steps_medal"
         app:layout_constraintTop_toBottomOf="@id/average_time_medal"
         android:textSize="120sp"
         android:text="@string/circle"
