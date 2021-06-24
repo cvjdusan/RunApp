@@ -1,14 +1,17 @@
 package rs.ac.bg.etf.running.workouts;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -31,11 +34,11 @@ public class WorkoutDetailsFragment extends Fragment {
     private FragmentWorkoutDetailsBinding binding;
 
     private NavController navController;
-
-    private LocationViewModel locationViewModel;
     private WorkoutViewModel workoutViewModel;
 
-    List<Location> locations;
+    private LocationViewModel locationViewModel;
+    private List<Location> locations;
+    public static List<Location> locationDraw = new ArrayList<>();;
 
     public WorkoutDetailsFragment() {
         // Required empty public constructor
@@ -46,12 +49,11 @@ public class WorkoutDetailsFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         mainActivity = (MainActivity) requireActivity();
-        locationViewModel = new ViewModelProvider(mainActivity).get(LocationViewModel.class);
-        locationViewModel.getLocations().observe(mainActivity, locationList -> {
-            locations = locationList;
-        });
-
         workoutViewModel = new ViewModelProvider(mainActivity).get(WorkoutViewModel.class);
+        locationViewModel = new ViewModelProvider(mainActivity).get(LocationViewModel.class);
+        locationViewModel.getLocations().observe(mainActivity, l -> {
+            this.locations = l;
+        });
     }
 
     @Override
@@ -65,7 +67,6 @@ public class WorkoutDetailsFragment extends Fragment {
             navController.navigateUp();
         });
 
-
         Workout workout = Objects.requireNonNull(workoutViewModel
                 .getWorkoutList()
                 .getValue())
@@ -74,14 +75,22 @@ public class WorkoutDetailsFragment extends Fragment {
                 );
 
 
+      //  Toast.makeText(mainActivity, workout.getId() + "", Toast.LENGTH_SHORT).show();
+
         binding.workoutLabel.setText(workout.getLabel());
         binding.steps.setText(workout.getSteps() + " steps");
 
-        LocationCustomView myCustomView = new LocationCustomView(mainActivity);
-        myCustomView.setLayoutParams(new ViewGroup.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, 450));
-        myCustomView.setLayoutParams(new ViewGroup.MarginLayoutParams(0, 10));
+//        locationDraw = new ArrayList<>();
+//        for(int i = 0; i < locations.size(); i++){
+//            Location current = locations.get(i);
+//            if(workout.getId() == current.getIdWorkout())
+//                locationDraw.add(current); // or new obj?
+//        }
+//        LocationCustomView locationCustomView = new LocationCustomView(mainActivity);
+//        locationCustomView.setLayoutParams(new ViewGroup.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, 450));
+//        locationCustomView.setLayoutParams(new ViewGroup.MarginLayoutParams(0, 10));
+//        binding.holder.addView(locationCustomView);
 
-        binding.holder.addView(myCustomView);
 
         return binding.getRoot();
     }
@@ -91,5 +100,6 @@ public class WorkoutDetailsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         navController = Navigation.findNavController(view);
     }
+
 
 }

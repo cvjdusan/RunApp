@@ -16,6 +16,8 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.CancellationTokenSource;
 import com.google.android.gms.tasks.Task;
 
+import java.util.ArrayList;
+
 import javax.inject.Inject;
 
 import rs.ac.bg.etf.running.MainActivity;
@@ -26,6 +28,29 @@ public class LifecycleAwareLocator implements DefaultLifecycleObserver {
     @Inject
     public LifecycleAwareLocator() {
 
+    }
+
+    private static ArrayList<Double> latitudeList, longitudeList;
+
+    public static ArrayList<Double> getLatitudeList() {
+        return latitudeList;
+    }
+
+    public void setLatitudeList(ArrayList<Double> latitudeList) {
+        LifecycleAwareLocator.latitudeList = latitudeList;
+    }
+
+    public static ArrayList<Double> getLongitudeList() {
+        return longitudeList;
+    }
+
+    public void setLongitudeList(ArrayList<Double> longitudeList) {
+        LifecycleAwareLocator.longitudeList = longitudeList;
+    }
+
+    public static void allocateLocationsList(){
+        latitudeList = new ArrayList<>();
+        longitudeList = new ArrayList<>();
     }
 
     public void getLocation(Context context) {
@@ -50,6 +75,14 @@ public class LifecycleAwareLocator implements DefaultLifecycleObserver {
 
                 OpenWeatherMapService openWeatherMapService = new OpenWeatherMapService();
                 openWeatherMapService.getCurrentWeather(latitude, longitude);
+
+                if(latitudeList == null && longitudeList == null){
+                    allocateLocationsList();
+                };
+
+                latitudeList.add(latitude);
+                longitudeList.add(longitude);
+
             }
         });
     }

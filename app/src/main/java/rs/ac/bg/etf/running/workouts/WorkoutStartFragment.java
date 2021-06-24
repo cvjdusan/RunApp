@@ -32,16 +32,24 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import dagger.hilt.android.AndroidEntryPoint;
 import rs.ac.bg.etf.running.MainActivity;
 import rs.ac.bg.etf.running.R;
+import rs.ac.bg.etf.running.data.Location;
+import rs.ac.bg.etf.running.data.User;
 import rs.ac.bg.etf.running.data.Workout;
 import rs.ac.bg.etf.running.databinding.FragmentWorkoutStartBinding;
+import rs.ac.bg.etf.running.location.LocationViewModel;
 import rs.ac.bg.etf.running.users.Session;
 
 @AndroidEntryPoint
@@ -53,6 +61,7 @@ public class WorkoutStartFragment extends Fragment {
 
     private FragmentWorkoutStartBinding binding;
     private WorkoutViewModel workoutViewModel;
+    private LocationViewModel locationViewModel;
     private NavController navController;
     private MainActivity mainActivity;
 
@@ -86,6 +95,7 @@ public class WorkoutStartFragment extends Fragment {
 
         mainActivity = (MainActivity) requireActivity();
         workoutViewModel = new ViewModelProvider(mainActivity).get(WorkoutViewModel.class);
+        locationViewModel = new ViewModelProvider(mainActivity).get(LocationViewModel.class);
 
         sharedPreferences = mainActivity.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 
@@ -433,6 +443,35 @@ public class WorkoutStartFragment extends Fragment {
 
         // add location
 
+        ArrayList<Double> latitudeList = LifecycleAwareLocator.getLatitudeList();
+        ArrayList<Double> longitudeList = LifecycleAwareLocator.getLongitudeList();
+
+        String username = Session.getCurrentUser().getUsername();
+
+        long lastInsertedWorkout = 0;
+
+        try {
+            lastInsertedWorkout = getLastInserted(username);
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+      //  Toast.makeText(mainActivity, idWorkout + " last", Toast.LENGTH_SHORT).show();
+
+        for(int i = 0; i < latitudeList.size(); i++) {
+            locationViewModel.insertLocation(new Location(
+                    0,
+                    latitudeList.get(i),
+                    longitudeList.get(i),
+                    lastInsertedWorkout,
+                    username
+            ));
+        }
+
+        LifecycleAwareLocator.allocateLocationsList();
+
         stopWorkout();
     }
 
@@ -452,4 +491,11 @@ public class WorkoutStartFragment extends Fragment {
     }
 
 
+    private long getLastInserted(String username) throws ExecutionException, InterruptedException {
+        Callable<Long> callable = () -> workoutViewModel.getLastInsertedFromUser(username);
+
+        Future<Long> future = Executors.newSingleThreadExecutor().submit(callable);
+
+        return future.get();
+    }
 }

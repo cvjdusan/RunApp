@@ -79,4 +79,8 @@ public class WorkoutViewModel extends ViewModel {
     public void setFilter(int filterArg) {
         this.filter = filterArg;
     }
+
+    public long getLastInsertedFromUser(String username){
+        return workoutRepository.getLastInsertedFromUser(username);
+    }
 }

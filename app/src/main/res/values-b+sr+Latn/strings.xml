@@ -89,7 +89,7 @@
     <string name="resume_button_text">Nastavi</string>
     <string name="next_button_text">></string>
     <string name="steps_text">Koraci: 0</string>
-    <string name="previous_button_text">"&lt;     "</string>
+    <string name="previous_button_text">"&lt;-     "</string>
     <string name="sort_option">Sortiraj?</string>
     <string name="button_ok">Ok</string>
     <string name="alarm">Napravi alarm</string>

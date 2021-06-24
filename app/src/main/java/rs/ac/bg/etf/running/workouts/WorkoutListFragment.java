@@ -13,11 +13,22 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 import dagger.hilt.android.AndroidEntryPoint;
 import rs.ac.bg.etf.running.MainActivity;
 import rs.ac.bg.etf.running.R;
+import rs.ac.bg.etf.running.data.Location;
+import rs.ac.bg.etf.running.data.Workout;
 import rs.ac.bg.etf.running.databinding.FragmentWorkoutListBinding;
+import rs.ac.bg.etf.running.location.LocationCustomView;
+import rs.ac.bg.etf.running.location.LocationViewModel;
+
+import static android.media.CamcorderProfile.get;
 
 @AndroidEntryPoint
 public class WorkoutListFragment extends Fragment {
@@ -88,6 +99,7 @@ public class WorkoutListFragment extends Fragment {
                     WorkoutListFragmentDirections.ActionWorkoutListToWorkoutDetails action =
                             WorkoutListFragmentDirections.actionWorkoutListToWorkoutDetails();
                     action.setWorkoutIndex(workoutIndex);
+
                     navController.navigate(action);
                 }
         );

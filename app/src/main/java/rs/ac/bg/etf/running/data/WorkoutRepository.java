@@ -64,4 +64,8 @@ public class WorkoutRepository {
         return workoutDao.getAllSortedLiveData(username);
     }
 
+    public long getLastInsertedFromUser(String username){
+        return workoutDao.getLastInsertedFromUser(username);
+    }
+
 }

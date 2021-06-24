@@ -88,11 +88,11 @@
     <string name="pause_button_text">|></string>
     <string name="resume_button_text">Resume</string>
     <string name="next_button_text">-></string>
-    <string name="previous_button_text">"         &lt;"</string>
+    <string name="previous_button_text">"&lt;-"</string>
     <string name="steps_text">Steps: 0</string>
     <string name="sort_option">Sort?</string>
     <string name="button_ok">OK</string>
-    <string name="alarm">Create alarm</string>
+    <string name="alarm">Create notification</string>
     <string name="your_stats">Your stats</string>
     <string name="number_of_steps">Number of steps</string>
     <string name="average_time">Average time</string>

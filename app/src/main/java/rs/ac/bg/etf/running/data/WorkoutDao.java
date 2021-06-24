@@ -33,4 +33,9 @@ public interface WorkoutDao {
 
     @Query("SELECT * FROM Workout WHERE distance >= :from AND distance <= :to AND username = :username ORDER BY distance DESC")
     LiveData<List<Workout>> getAllLiveDataFilterDistanceSorted(double from, double to, String username);
+
+    @Query("SELECT * FROM Workout WHERE id = ( SELECT MAX(id) FROM WORKOUT WHERE username = :username)")
+    long getLastInsertedFromUser(String username);
+
+
 }

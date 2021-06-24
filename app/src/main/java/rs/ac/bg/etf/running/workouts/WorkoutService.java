@@ -17,9 +17,9 @@ import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LifecycleService;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.inject.Inject;
 
@@ -43,7 +43,7 @@ public class WorkoutService extends LifecycleService {
 
     static int currentIndexSongs = 1;
     public static WorkoutService staticService;
-    private Timer timer;
+    private Timer timerLocations;
 
     public static int getCurrentIndexSongs() {
         return currentIndexSongs;
@@ -73,7 +73,7 @@ public class WorkoutService extends LifecycleService {
         Log.d(MainActivity.LOG_TAG, "WorkoutService.onCreate()");
         super.onCreate();
 
-        //timer = new Timer();
+        timerLocations = new Timer();
         //getLifecycle().addObserver(motivator);
         getLifecycle().addObserver(player);
         getLifecycle().addObserver(measurer);
@@ -102,6 +102,17 @@ public class WorkoutService extends LifecycleService {
                     measurer.start(this);
                     locator.getLocation(this);
                     stepCounter.start(this);
+
+                    // timer for getting and saving user locations
+                    setStaticService(this);
+                    timerLocations.schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            locator.getLocation(WorkoutService.getStaticService());
+
+                        }
+                    }, 0, 5000);
+
                 }
                 if(LifecycleAwarePlayer.getMediaPlayer() != null) {
                     LifecycleAwarePlayer.getMediaPlayer().setOnCompletionListener(mp -> {
@@ -169,13 +180,6 @@ public class WorkoutService extends LifecycleService {
                 }
                 break;
             case INTENT_ACTION_LOCATION:
-//                setStaticService(this);
-//                timer.schedule(new TimerTask() {
-//                    @Override
-//                    public void run() {
-//                        locator.getLocation(WorkoutService.getStaticService());
-//                    }
-//                }, 0, 5000);
                 locator.getLocation(this);
 
                 return START_STICKY;

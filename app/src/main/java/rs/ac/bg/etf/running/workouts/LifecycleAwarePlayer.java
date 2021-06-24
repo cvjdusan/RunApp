@@ -36,12 +36,12 @@ public class LifecycleAwarePlayer implements DefaultLifecycleObserver {
                 String song = null;
                 int musicPosition = musicList.charAt(0) - '0';
                 int currentPosition = 0;
+                // because I don't have index here as in WorkoutStartFragment
                 for(String file: context.getFilesDir().list()){
-
                     if(musicPosition == currentPosition) {
                         song = file;
                         break;
-                    }else
+                    } else
                         currentPosition++;
                 }
                 String path = context.getFilesDir().getAbsolutePath() + File.separator + song;
