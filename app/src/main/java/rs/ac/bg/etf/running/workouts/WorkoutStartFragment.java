@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
@@ -19,6 +21,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -34,6 +37,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -426,30 +430,8 @@ public class WorkoutStartFragment extends Fragment {
     }
 
     private void finishWorkout() {
-        long startTimestamp = sharedPreferences.getLong(START_TIMESTAMP_KEY, new Date().getTime());
-        long elapsed = new Date().getTime() - startTimestamp;
-        double minutes = elapsed / (1000.0 * 60);
-        String s = binding.steps.getText().toString();
-        int steps = Integer.parseInt(s.split(":")[1].substring(1));
-        workoutViewModel.insertWorkout(new Workout(
-                0,
-                new Date(),
-                getText(R.string.workout_label).toString(),
-                0.2 * minutes,
-                minutes,
-                steps,
-                Session.getCurrentUser().getUsername()
-        ));
-
-        // add location
-
-        ArrayList<Double> latitudeList = LifecycleAwareLocator.getLatitudeList();
-        ArrayList<Double> longitudeList = LifecycleAwareLocator.getLongitudeList();
-
         String username = Session.getCurrentUser().getUsername();
-
-        long lastInsertedWorkout = 0;
-
+        Workout lastInsertedWorkout = null;
         try {
             lastInsertedWorkout = getLastInserted(username);
         } catch (ExecutionException e) {
@@ -458,17 +440,42 @@ public class WorkoutStartFragment extends Fragment {
             e.printStackTrace();
         }
 
-      //  Toast.makeText(mainActivity, idWorkout + " last", Toast.LENGTH_SHORT).show();
+        long startTimestamp = sharedPreferences.getLong(START_TIMESTAMP_KEY, new Date().getTime());
+        long elapsed = new Date().getTime() - startTimestamp;
+        double minutes = elapsed / (1000.0 * 60);
+        String s = binding.steps.getText().toString();
+        int steps = Integer.parseInt(s.split(":")[1].substring(1));
+        Workout w = new Workout(
+                0,
+                new Date(),
+                getText(R.string.workout_label).toString(),
+                0.2 * minutes,
+                minutes,
+                steps,
+                Session.getCurrentUser().getUsername());
+        workoutViewModel.insertWorkout(w
+        );
 
-        for(int i = 0; i < latitudeList.size(); i++) {
-            locationViewModel.insertLocation(new Location(
-                    0,
-                    latitudeList.get(i),
-                    longitudeList.get(i),
-                    lastInsertedWorkout,
-                    username
-            ));
-        }
+        // add location
+
+        long id = 1;
+        if(lastInsertedWorkout != null)
+            id = lastInsertedWorkout.getId() + 1;
+
+        ArrayList<Double> latitudeList = LifecycleAwareLocator.getLatitudeList();
+        ArrayList<Double> longitudeList = LifecycleAwareLocator.getLongitudeList();
+            for(int i = 0; i < latitudeList.size(); i++) {
+                locationViewModel.insertLocation(new Location(
+                        0,
+                        latitudeList.get(i),
+                        longitudeList.get(i),
+                        id,
+                        username
+                ));
+            }
+
+
+        Toast.makeText(mainActivity, id + " last" + w.getId(), Toast.LENGTH_SHORT).show();
 
         LifecycleAwareLocator.allocateLocationsList();
 
@@ -491,10 +498,10 @@ public class WorkoutStartFragment extends Fragment {
     }
 
 
-    private long getLastInserted(String username) throws ExecutionException, InterruptedException {
-        Callable<Long> callable = () -> workoutViewModel.getLastInsertedFromUser(username);
+    private Workout getLastInserted(String username) throws ExecutionException, InterruptedException {
+        Callable<Workout> callable = () -> workoutViewModel.getLastInsertedFromUser();
 
-        Future<Long> future = Executors.newSingleThreadExecutor().submit(callable);
+        Future<Workout> future = Executors.newFixedThreadPool(4).submit(callable);
 
         return future.get();
     }

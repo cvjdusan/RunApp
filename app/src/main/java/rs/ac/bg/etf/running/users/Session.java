@@ -1,14 +1,13 @@
 package rs.ac.bg.etf.running.users;
 
 import android.app.Activity;
-import android.content.SharedPreferences;
 
-import java.util.concurrent.ExecutionException;
+import java.util.List;
 
 import rs.ac.bg.etf.running.MainActivity;
+import rs.ac.bg.etf.running.data.Location;
 import rs.ac.bg.etf.running.data.Playlist;
 import rs.ac.bg.etf.running.data.User;
-import rs.ac.bg.etf.running.login.LoginFragment;
 import rs.ac.bg.etf.running.rest.CurrentWeatherModel;
 
 public class Session {
@@ -18,6 +17,7 @@ public class Session {
     private static String currentSong;
     private static CurrentWeatherModel currentWeatherModel;
     private static int currentSteps = 0;
+    private static List<Location> currentLocations;
 
     public static void setMainActivity(Activity mainActivity) {
         Session.mainActivity = mainActivity;
@@ -68,6 +68,14 @@ public class Session {
     }
     public static int getCurrentSteps() {
         return Session.currentSteps;
+    }
+
+    public static void setCurrentLocations(List<Location> l) {
+        Session.currentLocations = l;
+    }
+
+    public static List<Location> getCurrentLocations(){
+        return Session.currentLocations;
     }
 
 }

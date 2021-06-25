@@ -10,17 +10,22 @@ import androidx.lifecycle.ViewModelProvider;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
+import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import dagger.hilt.android.AndroidEntryPoint;
+import rs.ac.bg.etf.running.data.Location;
 import rs.ac.bg.etf.running.data.User;
 import rs.ac.bg.etf.running.databinding.ActivityMainBinding;
+import rs.ac.bg.etf.running.location.LocationViewModel;
 import rs.ac.bg.etf.running.login.LoginFragment;
 import rs.ac.bg.etf.running.users.Session;
 import rs.ac.bg.etf.running.users.UserViewModel;
@@ -37,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
     private DrawerLayout drawerLayout;
     private UserViewModel userViewModel;
+    private LocationViewModel locationViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,8 +58,10 @@ public class MainActivity extends AppCompatActivity {
      //   drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
 
         Session.setMainActivity(this);
-
         createNotificationChannel();
+
+        locationViewModel = new ViewModelProvider(this).get(LocationViewModel.class);
+
         if(Session.getCurrentUser() == null){
             SharedPreferences mPrefs = getSharedPreferences("username", MODE_PRIVATE);
             String username = mPrefs.getString(LoginFragment.USERNAME_KEY, "");
@@ -66,6 +74,13 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
+
+
+
+        locationViewModel.getLocations().observe(this, l -> {
+              Session.setCurrentLocations(l);
+           // Toast.makeText(this, "DOHV LISTU", Toast.LENGTH_SHORT).show();
+        });
 
         if (savedInstanceState == null) {
             setupNavigation(true);

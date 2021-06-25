@@ -105,6 +105,7 @@
     <string name="distance">Distanca</string>
     <string name="to">Od</string>
     <string name="from">Do</string>
+    <string name="show_on_map">Prikaz na mapi</string>
 
 
 </resources>

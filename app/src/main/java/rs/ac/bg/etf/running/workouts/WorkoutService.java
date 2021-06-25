@@ -111,7 +111,7 @@ public class WorkoutService extends LifecycleService {
                             locator.getLocation(WorkoutService.getStaticService());
 
                         }
-                    }, 0, 5000);
+                    }, 0, 3000);
 
                 }
                 if(LifecycleAwarePlayer.getMediaPlayer() != null) {

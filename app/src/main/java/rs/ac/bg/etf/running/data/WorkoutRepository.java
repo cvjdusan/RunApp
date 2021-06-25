@@ -25,6 +25,10 @@ public class WorkoutRepository {
         executorService.submit(() -> workoutDao.insert(workout));
     }
 
+    public LiveData<List<Workout>> getAllWorkouts() {
+        return workoutDao.getAllUsersLiveData();
+    }
+
     public List<Workout> getAll(String username) {
         return workoutDao.getAll(username);
     }
@@ -64,8 +68,8 @@ public class WorkoutRepository {
         return workoutDao.getAllSortedLiveData(username);
     }
 
-    public long getLastInsertedFromUser(String username){
-        return workoutDao.getLastInsertedFromUser(username);
+    public Workout getLastInsertedFromUser(){
+        return workoutDao.getLastInsertedFromUser();
     }
 
 }

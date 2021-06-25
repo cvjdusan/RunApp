@@ -33,7 +33,6 @@ public class WorkoutViewModel extends ViewModel {
         this.workoutRepository = workoutRepository;
         this.savedStateHandle = savedStateHandle;
 
-
         workouts = Transformations.switchMap(
                 savedStateHandle.getLiveData(SORTED_KEY, false),
                 sorted -> {
@@ -80,7 +79,7 @@ public class WorkoutViewModel extends ViewModel {
         this.filter = filterArg;
     }
 
-    public long getLastInsertedFromUser(String username){
-        return workoutRepository.getLastInsertedFromUser(username);
+    public Workout getLastInsertedFromUser(){
+        return workoutRepository.getLastInsertedFromUser();
     }
 }
