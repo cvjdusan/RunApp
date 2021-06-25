@@ -13,7 +13,10 @@ import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.material.navigation.NavigationView;
 
 import java.util.ArrayList;
 import java.util.concurrent.Callable;
@@ -68,6 +71,11 @@ public class MainActivity extends AppCompatActivity {
             try {
                 User user = getUser(username);
                 Session.setCurrentUser(user);
+
+                TextView usernameView = ((NavigationView) findViewById(R.id.navigation_view)).getHeaderView(0)
+                        .findViewById(R.id.username);
+                usernameView.setText(username);
+
             } catch (ExecutionException e) {
                 e.printStackTrace();
             } catch (InterruptedException e) {

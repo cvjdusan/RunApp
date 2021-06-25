@@ -59,7 +59,6 @@ public class WorkoutDetailsFragment extends Fragment {
                 );
 
         locationDraw = new ArrayList<>();
-        Toast.makeText(mainActivity, locations.size() + "", Toast.LENGTH_SHORT).show();
         for(int i = 0; i < locations.size(); i++) {
             Location current = locations.get(i);
             if (workout.getId() == current.getIdWorkout())
@@ -83,7 +82,16 @@ public class WorkoutDetailsFragment extends Fragment {
             startActivity(intent);
         });
 
-        binding.workoutLabel.setText(workout.getLabel());
+        binding.workoutDate.setText(DateTimeUtil.getSimpleDateFormat().format(
+                workout.getDate()));
+        binding.workoutLabel.setText(
+                workout.getLabel());
+        binding.workoutDistance.setText(String.format("%.2f km",
+                workout.getDistance()));
+        binding.workoutPace.setText(String.format("%s min/km", DateTimeUtil.realMinutesToString(
+                workout.getDuration() / workout.getDistance())));
+        binding.workoutDuration.setText(String.format("%s min", DateTimeUtil.realMinutesToString(
+                workout.getDuration())));
         binding.steps.setText(workout.getSteps() + " steps");
         return binding.getRoot();
     }

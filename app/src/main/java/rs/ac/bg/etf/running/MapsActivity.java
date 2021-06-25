@@ -12,6 +12,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.maps.DirectionsApi;
 import com.google.maps.DirectionsApiRequest;
@@ -25,6 +26,7 @@ import com.google.maps.model.EncodedPolyline;
 import java.util.ArrayList;
 import java.util.List;
 
+import rs.ac.bg.etf.running.data.Location;
 import rs.ac.bg.etf.running.workouts.WorkoutDetailsFragment;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
@@ -40,6 +42,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
     }
 
     /**
@@ -59,8 +62,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         double longitudeStart = 2.173403;
 
         double latitudeEnd = 40.416775;
-        double longitudeEnd = 2.173403;
+        double longitudeEnd = -3.173403;
 
+        List<LatLng> l = new ArrayList<>();
 
         if(WorkoutDetailsFragment.locationDraw != null) {
             if(WorkoutDetailsFragment.locationDraw.size() > 0) {
@@ -69,6 +73,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 int s = WorkoutDetailsFragment.locationDraw.size() - 1;
                 latitudeEnd = WorkoutDetailsFragment.locationDraw.get(s).getLatitude();
                 longitudeEnd = WorkoutDetailsFragment.locationDraw.get(s).getLongitude();
+
+                List<Location> locations = WorkoutDetailsFragment.locationDraw;
+                for(int i = 0; i < locations.size(); i++){
+                    l.add(new LatLng(locations.get(i).getLatitude(), locations.get(i).getLongitude()));
+                }
+
+                Polyline polyline1 = googleMap.addPolyline(new PolylineOptions()
+                        .clickable(true).color(Color.BLUE)
+                        .addAll(l));
             }
         }
 
@@ -86,56 +99,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .apiKey("AIzaSyCYbRKyEasBZqrzCOPbwzcj_STkFwq-fJ8")
                 .build();
 
-        DirectionsApiRequest req = DirectionsApi.getDirections(context, "41.385064,2.173403", "40.416775,-3.70379");
-        try {
-            DirectionsResult res = req.await();
-
-            //Loop through legs and steps to get encoded polylines of each step
-            if (res.routes != null && res.routes.length > 0) {
-                DirectionsRoute route = res.routes[0];
-
-                if (route.legs !=null) {
-                    for(int i=0; i<route.legs.length; i++) {
-                        DirectionsLeg leg = route.legs[i];
-                        if (leg.steps != null) {
-                            for (int j=0; j<leg.steps.length;j++){
-                                DirectionsStep step = leg.steps[j];
-                                if (step.steps != null && step.steps.length >0) {
-                                    for (int k=0; k<step.steps.length;k++){
-                                        DirectionsStep step1 = step.steps[k];
-                                        EncodedPolyline points1 = step1.polyline;
-                                        if (points1 != null) {
-                                            //Decode polyline and add points to list of route coordinates
-                                            List<com.google.maps.model.LatLng> coords1 = points1.decodePath();
-                                            for (com.google.maps.model.LatLng coord1 : coords1) {
-                                                path.add(new LatLng(coord1.lat, coord1.lng));
-                                            }
-                                        }
-                                    }
-                                } else {
-                                    EncodedPolyline points = step.polyline;
-                                    if (points != null) {
-                                        //Decode polyline and add points to list of route coordinates
-                                        List<com.google.maps.model.LatLng> coords = points.decodePath();
-                                        for (com.google.maps.model.LatLng coord : coords) {
-                                            path.add(new LatLng(coord.lat, coord.lng));
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        } catch(Exception ex) {
-            Log.e(TAG, ex.getLocalizedMessage());
-        }
-
-        //Draw the polyline
-        if (path.size() > 0) {
-            PolylineOptions opts = new PolylineOptions().addAll(path).color(Color.BLUE).width(5);
-            mMap.addPolyline(opts);
-        }
+        DirectionsApiRequest req = DirectionsApi.getDirections(context,
+                latitudeStart + "," + longitudeStart,
+                latitudeEnd + "," + longitudeEnd);
 
         mMap.getUiSettings().setZoomControlsEnabled(true);
 
