@@ -62,6 +62,7 @@ public class WorkoutStartFragment extends Fragment {
     public static final String SHARED_PREFERENCES_NAME = "workout-shared-preferences";
     public static final String START_TIMESTAMP_KEY = "start-timestamp-key";
     public static final String CURRENT_DURATION_KEY = "current-duration-key";
+    public static final String CURRENT_START_KEY = "current-start-key";
 
     private FragmentWorkoutStartBinding binding;
     private WorkoutViewModel workoutViewModel;
@@ -81,9 +82,8 @@ public class WorkoutStartFragment extends Fragment {
             registerForActivityResult(
                     new ActivityResultContracts.RequestPermission(),
                     isPermissionGranted -> {
-                        //TODO: Ovo mozda srediti da ne mora da se klikne
                         if (isPermissionGranted) {
-                            startWorkout(new Date().getTime());
+                           // startWorkout(new Date().getTime());
                         }
                     });
 
@@ -147,6 +147,40 @@ public class WorkoutStartFragment extends Fragment {
 
         timer = new Timer();
         songTimer = new Timer();
+
+        if(Session.getCurrentSong() != null) {
+            if(isSongPlaying) {
+
+                if(sharedPreferences.contains(CURRENT_START_KEY))
+                    timeStart = sharedPreferences.getLong(CURRENT_START_KEY, timeStart);
+
+                long timeLapsed = System.currentTimeMillis() - timeStart;
+                int minutes = (int) ((timeLapsed / 1000) / 60);
+                int sec = (int) ((timeLapsed / 1000) % 60);
+                String time = sharedPreferences.getString(CURRENT_DURATION_KEY, "");
+                String[] helper = time.split(":");
+                int minsLeft = Integer.parseInt(helper[0]);
+                int secLeft = Integer.parseInt(helper[1]);
+
+                int total = minsLeft * 60 + secLeft;
+                int total2 = minutes * 60 + sec;
+
+                if (total - total2 >= 0) {
+                    total = total - total2;
+                }
+
+                minsLeft = total / 60;
+                secLeft = total % 60;
+
+                StringBuilder remaining = new StringBuilder();
+                remaining.append(String.format("%02d", minsLeft)).append(":");
+                remaining.append(String.format("%02d", secLeft));
+
+                binding.remaining.setText(remaining);
+            } else
+                binding.remaining.setText(sharedPreferences.getString(CURRENT_DURATION_KEY, ""));
+            notPaused = true;
+        }
 
 
         if (sharedPreferences.contains(START_TIMESTAMP_KEY)) {
@@ -379,43 +413,44 @@ public class WorkoutStartFragment extends Fragment {
         Intent intent = new Intent();
         intent.setClass(mainActivity, WorkoutService.class);
         intent.setAction(WorkoutService.INTENT_ACTION_START_TRAINING);
+        LifecycleAwareLocator.allocateLocationsList();
         mainActivity.startService(intent);
     }
 
     long timeStart = 0;
-    @Override
-    public void onResume() {
-        super.onResume();
-        if(Session.getCurrentSong() != null) {
-            if(isSongPlaying) {
-                long timeLapsed = System.currentTimeMillis() - timeStart;
-                int minutes = (int) ((timeLapsed / 1000) / 60);
-                int sec = (int) ((timeLapsed / 1000) % 60);
-                String time = sharedPreferences.getString(CURRENT_DURATION_KEY, "");
-                String[] helper = time.split(":");
-                int minsLeft = Integer.parseInt(helper[0]);
-                int secLeft = Integer.parseInt(helper[1]);
-
-                int total = minsLeft * 60 + secLeft;
-                int total2 = minutes * 60 + sec;
-
-                if (total - total2 >= 0) {
-                    total = total - total2;
-                }
-
-                minsLeft = total / 60;
-                secLeft = total % 60;
-
-                StringBuilder remaining = new StringBuilder();
-                remaining.append(String.format("%02d", minsLeft)).append(":");
-                remaining.append(String.format("%02d", secLeft));
-
-                binding.remaining.setText(remaining);
-            } else
-                binding.remaining.setText(sharedPreferences.getString(CURRENT_DURATION_KEY, ""));
-            notPaused = true;
-        }
-    }
+//    @Override
+//    public void onResume() {
+//        super.onResume();
+//        if(Session.getCurrentSong() != null) {
+//            if(isSongPlaying) {
+//                long timeLapsed = System.currentTimeMillis() - timeStart;
+//                int minutes = (int) ((timeLapsed / 1000) / 60);
+//                int sec = (int) ((timeLapsed / 1000) % 60);
+//                String time = sharedPreferences.getString(CURRENT_DURATION_KEY, "");
+//                String[] helper = time.split(":");
+//                int minsLeft = Integer.parseInt(helper[0]);
+//                int secLeft = Integer.parseInt(helper[1]);
+//
+//                int total = minsLeft * 60 + secLeft;
+//                int total2 = minutes * 60 + sec;
+//
+//                if (total - total2 >= 0) {
+//                    total = total - total2;
+//                }
+//
+//                minsLeft = total / 60;
+//                secLeft = total % 60;
+//
+//                StringBuilder remaining = new StringBuilder();
+//                remaining.append(String.format("%02d", minsLeft)).append(":");
+//                remaining.append(String.format("%02d", secLeft));
+//
+//                binding.remaining.setText(remaining);
+//            } else
+//                binding.remaining.setText(sharedPreferences.getString(CURRENT_DURATION_KEY, ""));
+//            notPaused = true;
+//        }
+//    }
 
     @Override
     public void onPause() {
@@ -424,6 +459,8 @@ public class WorkoutStartFragment extends Fragment {
             timeStart = System.currentTimeMillis();
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putString(CURRENT_DURATION_KEY, binding.remaining.getText().toString());
+            editor.commit();
+            editor.putLong(CURRENT_START_KEY, timeStart);
             editor.commit();
             notPaused = false;
         }
@@ -494,6 +531,8 @@ public class WorkoutStartFragment extends Fragment {
         mainActivity.stopService(intent);
         sharedPreferences.edit().remove(START_TIMESTAMP_KEY).commit();
         sharedPreferences.edit().remove(CURRENT_DURATION_KEY).commit();
+        sharedPreferences.edit().remove(CURRENT_START_KEY).commit();
+        WorkoutService.stopTimerLocations();
         navController.navigateUp();
     }
 

@@ -5,6 +5,7 @@ import androidx.fragment.app.FragmentActivity;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -75,14 +76,26 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 longitudeEnd = WorkoutDetailsFragment.locationDraw.get(s).getLongitude();
 
                 List<Location> locations = WorkoutDetailsFragment.locationDraw;
-                for(int i = 0; i < locations.size(); i++){
-                    l.add(new LatLng(locations.get(i).getLatitude(), locations.get(i).getLongitude()));
+//                for(int i = 0; i < locations.size(); i++){
+//                    l.add(new LatLng(locations.get(i).getLatitude(), locations.get(i).getLongitude()));
+//                }
+
+                PolylineOptions options = new PolylineOptions().width(5).color(Color.BLUE).geodesic(true);
+                for (int z = 0; z < locations.size(); z++) {
+                    LatLng point = new LatLng(locations.get(z).getLatitude(), locations.get(z).getLongitude());
+                   // Toast.makeText(this, point.latitude + " " + point.longitude, Toast.LENGTH_SHORT).show();
+                    options.add(point);
                 }
 
-                Polyline polyline1 = googleMap.addPolyline(new PolylineOptions()
+                Polyline polyline1 = googleMap.addPolyline(options
                         .clickable(true).color(Color.BLUE)
                         .addAll(l));
             }
+//
+//                Polyline polyline1 = googleMap.addPolyline(new PolylineOptions()
+//                        .clickable(true).color(Color.BLUE)
+//                        .addAll(l));
+
         }
 
         LatLng start = new LatLng(latitudeStart,longitudeStart);
@@ -105,6 +118,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         mMap.getUiSettings().setZoomControlsEnabled(true);
 
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(start, 6));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(start, 10));
     }
 }

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -22,6 +23,7 @@ import javax.inject.Inject;
 
 import rs.ac.bg.etf.running.MainActivity;
 import rs.ac.bg.etf.running.rest.OpenWeatherMapService;
+import rs.ac.bg.etf.running.users.Session;
 
 public class LifecycleAwareLocator implements DefaultLifecycleObserver {
 
@@ -79,6 +81,8 @@ public class LifecycleAwareLocator implements DefaultLifecycleObserver {
                 if(latitudeList == null && longitudeList == null){
                     allocateLocationsList();
                 };
+
+              //  Toast.makeText(Session.getMainActivity(), latitude + ":" + longitude, Toast.LENGTH_SHORT).show();
 
                 latitudeList.add(latitude);
                 longitudeList.add(longitude);

@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -90,16 +91,19 @@ public class MainActivity extends AppCompatActivity {
            // Toast.makeText(this, "DOHV LISTU", Toast.LENGTH_SHORT).show();
         });
 
+
         if (savedInstanceState == null) {
             setupNavigation(true);
-        } else {
-//            if (getIntent().getAction().equals(INTENT_ACTION_WORKOUT)) {
-//                NavController navController = NavigationDrawerUtil
-//                        .changeNavHostFragment(R.id.nav_graph_workouts);
-//                if (navController != null) {
-//                    navController.navigate(WorkoutListFragmentDirections.startWorkout());
-//                }
-//            }
+        }
+
+        if(getIntent() != null && getIntent().getAction() != null) {
+            if (getIntent().getAction().equals(INTENT_ACTION_WORKOUT)) {
+                NavController navController = NavigationDrawerUtil
+                        .changeNavHostFragment(R.id.nav_graph_workouts);
+                if (navController != null) {
+                    navController.navigate(WorkoutListFragmentDirections.startWorkout());
+                }
+            }
         }
     }
 
@@ -149,12 +153,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = "AlarmChannel";
-            String description = "Channel for alarm";
             int importance = NotificationManager.IMPORTANCE_DEFAULT;
             NotificationChannel channel = new NotificationChannel("notifyAlarm",
-                    name, importance);
-            channel.setDescription(description);
+                    "AlarmChannel", importance);
+            channel.setDescription("Channel for alarm");
 
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);

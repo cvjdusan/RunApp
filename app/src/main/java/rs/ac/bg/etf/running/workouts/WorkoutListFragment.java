@@ -30,6 +30,8 @@ public class WorkoutListFragment extends Fragment {
     private NavController navController;
     private MainActivity mainActivity;
 
+    private boolean isSort = false, isFilter = false;
+
     public WorkoutListFragment() {
         // Required empty public constructor
     }
@@ -67,17 +69,36 @@ public class WorkoutListFragment extends Fragment {
                                 double to = Double.parseDouble(helper[1]);
                                 int filterArg = Integer.parseInt(helper[2]);;
 
-//                                Toast.makeText(getContext(), from + " " + to + " " + filterArg + " ",
-//                                        Toast.LENGTH_SHORT).show();
+                                if(filterArg != -1)
+                                    isFilter = true;
+                                else
+                                    isFilter = false;
 
                                 workoutViewModel.setFrom(from);
                                 workoutViewModel.setTo(to);
                                 workoutViewModel.setFilter(filterArg);
 
-                                if (resSort.equals("1"))
+                                if (resSort.equals("1")) {
+                                    isSort = true;
                                     workoutViewModel.sort();
-                                else
+                                }
+                                else {
+                                    isSort = false;
                                     workoutViewModel.showUnsorted();
+                                }
+
+                                String text = "";
+                                if(isFilter)
+                                    text = " Filter on |";
+                                else
+                                    text = " Filter off |";
+
+                                if(isSort)
+                                    text += " Sort on";
+                                else
+                                    text += " Sort off";
+
+                                binding.sortOrFilter.setText(text);
                             });
                     return false;
             }
@@ -102,6 +123,19 @@ public class WorkoutListFragment extends Fragment {
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(mainActivity));
 
         binding.floatingActionButton.inflate(R.menu.menu_workout_list_fab);
+
+        String text = "";
+        if(isFilter)
+            text = " Filter on |";
+        else
+            text = " Filter off |";
+
+        if(isSort)
+            text += " Sort on";
+        else
+            text += " Sort off";
+
+        binding.sortOrFilter.setText(text);
 
         binding.floatingActionButton.setOnActionSelectedListener(actionItem -> {
             switch (actionItem.getId()) {

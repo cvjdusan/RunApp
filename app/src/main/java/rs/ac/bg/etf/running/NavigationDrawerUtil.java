@@ -90,6 +90,7 @@ public class NavigationDrawerUtil {
                     SharedPreferences sharedPreferences = mainActivity.getSharedPreferences(WorkoutStartFragment.SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
                     sharedPreferences.edit().remove(WorkoutStartFragment.START_TIMESTAMP_KEY).commit();
                     sharedPreferences.edit().remove(WorkoutStartFragment.CURRENT_DURATION_KEY).commit();
+                    sharedPreferences.edit().remove(WorkoutStartFragment.CURRENT_START_KEY).commit();
                     intent = new Intent(mainActivity, LoginActivity.class);
                     mainActivity.startActivity(intent);
                     mainActivity.finish();

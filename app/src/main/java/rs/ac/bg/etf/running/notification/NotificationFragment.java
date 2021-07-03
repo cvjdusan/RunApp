@@ -35,6 +35,8 @@ public class NotificationFragment extends Fragment {
     private NavController navController;
     private MainActivity mainActivity;
 
+    long alarmTime;
+
     public NotificationFragment() {
         // Required empty public constructor
     }
@@ -76,10 +78,10 @@ public class NotificationFragment extends Fragment {
 
             PendingIntent pendingIntent = PendingIntent.getBroadcast(mainActivity, 0, intent, 0);
 
-            Intent intentLocation = new Intent();
-            intentLocation.setClass(mainActivity, WorkoutService.class);
-            intentLocation.setAction(WorkoutService.INTENT_ACTION_LOCATION);
-            mainActivity.startService(intentLocation);
+            Intent intent2 = new Intent();
+            intent2.setClass(mainActivity, WorkoutService.class);
+            intent2.setAction(WorkoutService.INTENT_ACTION_LOCATION);
+            mainActivity.startService(intent2);
 
             AlarmManager alarmManager = (AlarmManager) mainActivity.getSystemService(Context.ALARM_SERVICE);
 
@@ -97,15 +99,22 @@ public class NotificationFragment extends Fragment {
             alarmCalendar.set(Calendar.HOUR_OF_DAY, hour);
             alarmCalendar.set(Calendar.MINUTE, minute);
 
-            long alarmTime = alarmCalendar.getTimeInMillis();
+            alarmTime = alarmCalendar.getTimeInMillis();
 
             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, alarmTime, 7 * AlarmManager.INTERVAL_DAY, pendingIntent);
 
             String stringDay = daysString[binding.spinner.getSelectedItemPosition()];
-            Toast.makeText(mainActivity, "You will receive notifications at" + hour + ":" + minute + " on every " + stringDay, Toast.LENGTH_SHORT).show();
+            Toast.makeText(mainActivity, "You will receive notifications at " + hour + ":" + minute + " on every " + stringDay, Toast.LENGTH_SHORT).show();
         });
 
         return binding.getRoot();
+    }
+
+    public void SetAlarm(Context context){
+        AlarmManager am=(AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+        Intent i = new Intent(context, NotificationFragment.class);
+        PendingIntent pi = PendingIntent.getBroadcast(context, 0, i, 0);
+        am.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 7 * AlarmManager.INTERVAL_DAY, pi);
     }
 
     @Override

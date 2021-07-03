@@ -43,7 +43,7 @@ public class WorkoutService extends LifecycleService {
 
     static int currentIndexSongs = 1;
     public static WorkoutService staticService;
-    private Timer timerLocations;
+    private static Timer timerLocations;
 
     public static int getCurrentIndexSongs() {
         return currentIndexSongs;
@@ -111,7 +111,7 @@ public class WorkoutService extends LifecycleService {
                             locator.getLocation(WorkoutService.getStaticService());
 
                         }
-                    }, 0, 3000);
+                    }, 0, 1000);
 
                 }
                 if(LifecycleAwarePlayer.getMediaPlayer() != null) {
@@ -208,6 +208,11 @@ public class WorkoutService extends LifecycleService {
     public void onDestroy() {
         Log.d(MainActivity.LOG_TAG, "WorkoutService.onDestroy()");
         super.onDestroy();
+    }
+
+    public static void stopTimerLocations(){
+        if(timerLocations != null)
+            timerLocations.cancel();
     }
 
     private void createNotificationChannel() {
