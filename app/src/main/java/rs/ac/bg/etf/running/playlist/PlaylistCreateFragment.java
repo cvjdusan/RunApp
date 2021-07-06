@@ -65,9 +65,12 @@ public class PlaylistCreateFragment extends Fragment {
 //        tbrow0.addView(tv2);
 //        binding.tableMain.addView(tbrow0);
 
-        File filesDir = mainActivity.getFilesDir();
+        String path = mainActivity.getFilesDir() + File.separator + "music";
+        File directory = null;
+        directory = new File(path);
+        //File filesDir = mainActivity.getFilesDir();
         int index = 0;
-        for (String str : filesDir.list()) {
+        for (String str : directory.list()) {
             TableRow tbrow = new TableRow(mainActivity);
             TextView t1v = new TextView(mainActivity);
             t1v.setText("" + index + " ");
@@ -91,7 +94,10 @@ public class PlaylistCreateFragment extends Fragment {
         binding.createPlaylistButton.setOnClickListener(view -> {
             String name = binding.playlistLabel.getEditText().getText().toString();
             String songsPositions, songNames;
-            File files = mainActivity.getFilesDir();
+            String path1 = mainActivity.getFilesDir() + File.separator + "music";
+            File files = null;
+            files = new File(path1);
+           // File files = mainActivity.getFilesDir();
 
             int i = 0;
             StringBuilder musicListPositions = new StringBuilder();

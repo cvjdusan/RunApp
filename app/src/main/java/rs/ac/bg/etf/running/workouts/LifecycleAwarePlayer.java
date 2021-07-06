@@ -35,19 +35,28 @@ public class LifecycleAwarePlayer implements DefaultLifecycleObserver {
                 String musicList = Session.getCurrentPlaylist().getMusicListPositions();
                 String song = null;
                 int musicPosition = musicList.charAt(0) - '0';
+                String path = context.getFilesDir() + File.separator + "music";
+                File directory = null;
+                directory = new File(path);
+//                String[] names = Session.getCurrentPlaylist().getMusicListNames().split("/");
+//                if(names.length == 1)
+//                    song = names[0];
+//                else
+//                    song = names[musicPosition];
                 int currentPosition = 0;
-                // because I don't have index here as in WorkoutStartFragment
-                for(String file: context.getFilesDir().list()){
+                for(String file: directory.list()){
                     if(musicPosition == currentPosition) {
                         song = file;
                         break;
                     } else
                         currentPosition++;
                 }
-                String path = context.getFilesDir().getAbsolutePath() + File.separator + song;
+
+                String path1 = context.getFilesDir().getAbsolutePath() +
+                        File.separator + "music" + File.separator + song;
                 mediaPlayer = new MediaPlayer();
                 mp = mediaPlayer; // static
-                mediaPlayer.setDataSource(path);
+                mediaPlayer.setDataSource(path1);
 
                 Intent local = new Intent();
                 local.setAction("startMusic");

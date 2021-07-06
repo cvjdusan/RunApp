@@ -274,24 +274,24 @@ public class WorkoutStartFragment extends Fragment {
     private void playSong(MediaPlayer mediaPlayer, String[] allSongs, String songs) {
         String song = "";
 
-        String[] names = Session.getCurrentPlaylist().getMusicListNames().split("/");
-        song = names[currentIndexSong];
+//        String[] names = Session.getCurrentPlaylist().getMusicListNames().split("/");
+//        song = names[currentIndexSong];
 
-        // int songPosition = Integer.parseInt(allSongs[currentIndexSong]);
-        //        int currentPosition = 0;
-        //        for (String strFile : Objects.requireNonNull(mainActivity.getFilesDir().list())) {
-        //            if (songPosition == currentPosition) {
-        //                song = strFile;
-        //                break;
-        //            }
-        //            else
-        //                currentPosition++;
-        //        }
-
-        String path = mainActivity.getFilesDir().getAbsolutePath() + File.separator + song;
+         int songPosition = Integer.parseInt(allSongs[currentIndexSong]);
+         int currentPosition = 0;
+         String path = mainActivity.getFilesDir() + File.separator + "music";
+         File directory = null; directory = new File(path);
+         for (String strFile : Objects.requireNonNull(directory.list())) {
+             if (songPosition == currentPosition) {
+                 song = strFile;
+                 break;
+             }
+             else
+                 currentPosition++;
+         }
 
         try {
-            mediaPlayer.setDataSource(path);
+            mediaPlayer.setDataSource(path + File.separator + song);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -418,39 +418,39 @@ public class WorkoutStartFragment extends Fragment {
     }
 
     long timeStart = 0;
-//    @Override
-//    public void onResume() {
-//        super.onResume();
-//        if(Session.getCurrentSong() != null) {
-//            if(isSongPlaying) {
-//                long timeLapsed = System.currentTimeMillis() - timeStart;
-//                int minutes = (int) ((timeLapsed / 1000) / 60);
-//                int sec = (int) ((timeLapsed / 1000) % 60);
-//                String time = sharedPreferences.getString(CURRENT_DURATION_KEY, "");
-//                String[] helper = time.split(":");
-//                int minsLeft = Integer.parseInt(helper[0]);
-//                int secLeft = Integer.parseInt(helper[1]);
-//
-//                int total = minsLeft * 60 + secLeft;
-//                int total2 = minutes * 60 + sec;
-//
-//                if (total - total2 >= 0) {
-//                    total = total - total2;
-//                }
-//
-//                minsLeft = total / 60;
-//                secLeft = total % 60;
-//
-//                StringBuilder remaining = new StringBuilder();
-//                remaining.append(String.format("%02d", minsLeft)).append(":");
-//                remaining.append(String.format("%02d", secLeft));
-//
-//                binding.remaining.setText(remaining);
-//            } else
-//                binding.remaining.setText(sharedPreferences.getString(CURRENT_DURATION_KEY, ""));
-//            notPaused = true;
-//        }
-//    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(Session.getCurrentSong() != null) {
+            if(isSongPlaying) {
+                long timeLapsed = System.currentTimeMillis() - timeStart;
+                int minutes = (int) ((timeLapsed / 1000) / 60);
+                int sec = (int) ((timeLapsed / 1000) % 60);
+                String time = sharedPreferences.getString(CURRENT_DURATION_KEY, "");
+                String[] helper = time.split(":");
+                int minsLeft = Integer.parseInt(helper[0]);
+                int secLeft = Integer.parseInt(helper[1]);
+
+                int total = minsLeft * 60 + secLeft;
+                int total2 = minutes * 60 + sec;
+
+                if (total - total2 >= 0) {
+                    total = total - total2;
+                }
+
+                minsLeft = total / 60;
+                secLeft = total % 60;
+
+                StringBuilder remaining = new StringBuilder();
+                remaining.append(String.format("%02d", minsLeft)).append(":");
+                remaining.append(String.format("%02d", secLeft));
+
+                binding.remaining.setText(remaining);
+            } else
+                binding.remaining.setText(sharedPreferences.getString(CURRENT_DURATION_KEY, ""));
+            notPaused = true;
+        }
+    }
 
     @Override
     public void onPause() {
@@ -525,6 +525,7 @@ public class WorkoutStartFragment extends Fragment {
 
     private void stopWorkout() {
         Session.setCurrentSteps(0);
+        WorkoutService.currentIndexSongs = 1;
 
         Intent intent = new Intent();
         intent.setClass(mainActivity, WorkoutService.class);
